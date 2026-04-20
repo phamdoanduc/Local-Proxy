@@ -10,7 +10,6 @@
 - **Kiến trúc Modular**: Dễ dàng bảo trì và mở rộng.
 - **Hỗ trợ Đa nguồn**: Nạp Proxy từ `proxies.txt` (Tĩnh) hoặc `key.txt` (Xoay IP VuaProxy).
 - **Tự động Xoay IP**: Tích hợp bộ đếm ngược (Cooldown) đồng bộ trực tiếp với server VuaProxy.
-- **Xử lý Token Thông minh**: Tự động giải mã các loại Key Token phức tạp.
 - **Dashboard v4.0**: Giao diện trực quan trên Command Line, theo dõi kết nối và trạng thái IP tức thì.
 - **Tối ưu Hiệu năng**: Cơ chế Tunneling bất đồng bộ (Asyncio) cực nhẹ, hỗ trợ hàng trăm cổng đồng thời.
 
