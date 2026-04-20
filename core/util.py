@@ -17,10 +17,16 @@ def format_uptime(seconds):
     return f"{h}h {m}m {s}s"
 
 def find_file(filename):
-    """Finds a file in multiple locations to ensure portability."""
+    """Finds a file prioritizing the directory of the current script/EXE."""
+    # 1. Absolute Priority: Directory where the current running process lives
     exe_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    # 2. Secondary: Current Working Directory
     cwd = os.getcwd()
+    
     search_paths = [exe_dir, cwd]
+    
+    # Remove duplicates
+    search_paths = list(dict.fromkeys(search_paths))
     
     for path in search_paths:
         full_path = os.path.join(path, filename)
@@ -85,7 +91,7 @@ def load_keys():
     return lines
 
 def get_diagnostic_info():
-    """Provides a detailed diagnostic report of the environment."""
+    """Provides a detailed diagnostic report with file sizes to identify empty files."""
     exe_path = sys.argv[0]
     cwd = os.getcwd()
     
@@ -96,8 +102,11 @@ def get_diagnostic_info():
     
     for f in ["config.json", "proxies.txt", "key.txt"]:
         p = find_file(f)
-        status = f"[FOUND at {p}]" if p else "[NOT FOUND]"
-        report += f"  - {f}: {status}\n"
+        if p:
+            size = os.path.getsize(p)
+            report += f"  - {f}: [FOUND at {p}] ({size} bytes)\n"
+        else:
+            report += f"  - {f}: [NOT FOUND]\n"
     
     report += "-------------------------\n"
     return report
