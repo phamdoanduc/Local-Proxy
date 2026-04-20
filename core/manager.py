@@ -49,7 +49,8 @@ class ProxyManager:
                         upstream = None
                         
                     if not upstream: 
-                        console.print(f"[red]   ! [{tunnel_id}] API Request Failed. Using dummy IP.[/]")
+                        error_msg = getattr(rotator, 'last_error', 'Unknown Error')
+                        console.print(f"[red]   ! [{tunnel_id}] API Failure: {error_msg}[/]")
                         upstream = "0.0.0.0:0"
                     
                     tunnel = ProxyTunnel(tunnel_id, target_port, upstream)
