@@ -2,17 +2,23 @@ import json
 import os
 import sys
 import re
+import time
 from rich.console import Console
 
 console = Console()
 
+def format_uptime(seconds):
+    """Converts seconds into a human-readable Hh Mm Ss format."""
+    seconds = int(seconds)
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    s = seconds % 60
+    return f"{h}h {m}m {s}s"
+
 def find_file(filename):
     """Finds a file in multiple locations to ensure portability."""
-    # 1. Check same directory as the EXE/Script
     exe_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    # 2. Check current working directory
     cwd = os.getcwd()
-    
     search_paths = [exe_dir, cwd]
     
     for path in search_paths:
@@ -37,22 +43,16 @@ def load_config():
     path = find_file("config.json")
     if not path:
         return {}
-    
     content = read_file_safe(path)
     if not content: return {}
-    
     try:
-        # Standard parse
         return json.loads(content)
     except json.JSONDecodeError as e:
-        # Try to fix common trailing comma or missing comma issues (Basic Attempt)
         try:
-            # Remove trailing commas
             fixed = re.sub(r',\s*([\]}])', r'\1', content)
             return json.loads(fixed)
         except:
             console.print(f"[bold red][!] Config Error in config.json at line {e.lineno}, col {e.colno}[/]")
-            console.print(f"[yellow][?] Hint: Make sure every line has a comma except the last one.[/]")
             return {}
     except:
         return {}
@@ -63,7 +63,6 @@ def load_proxies():
     if not path: return []
     content = read_file_safe(path)
     if not content: return []
-    
     lines = []
     for line in content.splitlines():
         cleaned = line.strip()
@@ -77,7 +76,6 @@ def load_keys():
     if not path: return []
     content = read_file_safe(path)
     if not content: return []
-    
     lines = []
     for line in content.splitlines():
         cleaned = line.strip()
