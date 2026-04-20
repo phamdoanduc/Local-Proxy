@@ -1,12 +1,32 @@
 import json
 import os
+import sys
+import time
 
-def load_config(file_path="config.json"):
-    """Loads configuration settings from a JSON file."""
+def get_base_path():
+    """Returns the base path for static files, handling PyInstaller environment."""
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.dirname(sys.executable)
+    return os.path.abspath(".")
+
+def format_uptime(seconds):
+    """Formats seconds into h m s format."""
+    s = int(seconds)
+    h = s // 3600
+    m = (s % 3600) // 60
+    s = s % 60
+    return f"{h}h {m}m {s}s"
+
+def load_config(file_name="config.json"):
+    """Loads configuration settings."""
+    base = get_base_path()
+    file_path = os.path.join(base, file_name)
+    
     if not os.path.exists(file_path):
         return {
+            "start_port": 1112,
             "rotation_interval": 300,
-            "rotation_enabled": False,
+            "rotation_enabled": True,
             "use_key_proxy": True,
             "token_proxy_port": 9898
         }
@@ -14,78 +34,49 @@ def load_config(file_path="config.json"):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             config = json.load(f)
-            start_port = config.get("start_port", 8001)
-            # Port Validation
-            if not (1 <= start_port <= 65535):
-                start_port = 8001
-            
             return {
-                "start_port": start_port,
+                "start_port": config.get("start_port", 1112),
                 "rotation_interval": config.get("rotation_interval", 300),
-                "rotation_enabled": config.get("rotation_enabled", False),
+                "rotation_enabled": config.get("rotation_enabled", True),
                 "use_key_proxy": config.get("use_key_proxy", True),
                 "token_proxy_port": config.get("token_proxy_port", 9898)
             }
     except Exception:
-        return {"start_port": 8001}
+        return {"start_port": 1112}
 
-def load_proxies(file_path="proxies.txt"):
-    """Loads static proxies from proxies.txt."""
-    if not os.path.exists(file_path):
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write("# Static Proxies: ip:port:user:pass\n")
-        return []
-    
+def load_proxies(file_name="proxies.txt"):
+    """Loads static proxies from file."""
+    file_path = os.path.join(get_base_path(), file_name)
     proxies = []
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"): continue
-                proxies.append({"type": "static", "raw": line})
-        return proxies
-    except Exception:
-        return []
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        proxies.append({"type": "static", "raw": line})
+        except: pass
+    return proxies
 
-def load_keys(file_path="key.txt"):
-    """Loads rotating keys from key.txt."""
-    if not os.path.exists(file_path):
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write("# Rotating Keys (VuaProxy or HomeProxy)\n")
-        return []
-    
+def load_keys(file_name="key.txt"):
+    """Loads rotation keys from file."""
+    file_path = os.path.join(get_base_path(), file_name)
     keys = []
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"): continue
-                keys.append({"type": "api", "raw": line})
-        return keys
-    except Exception:
-        return []
-
-def format_uptime(seconds):
-    """Utility to format seconds into a human-readable string."""
-    h = int(seconds // 3600)
-    m = int((seconds % 3600) // 60)
-    s = int(seconds % 60)
-    return f"{h}h {m}m {s}s"
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        keys.append({"type": "api", "raw": line})
+        except: pass
+    return keys
 
 def clear_port(port):
-    """Checks for a process on a port and kills it (Windows specific)."""
     import subprocess
     try:
-        # Find the PID using the port
-        cmd = f'netstat -ano | findstr :{port}'
-        output = subprocess.check_output(cmd, shell=True).decode()
-        for line in output.strip().split('\n'):
-            if 'LISTENING' in line:
-                pid = line.strip().split()[-1]
-                if pid != '0':
-                    # Kill the process
-                    subprocess.run(f'taskkill /F /PID {pid}', shell=True, capture_output=True)
-                    return True
-    except Exception:
+        # Silently attempt to clear port
+        cmd = f"Stop-Process -Id (Get-NetTCPConnection -LocalPort {port}).OwningProcess -Force"
+        subprocess.run(["powershell", "-Command", cmd], capture_output=True)
+    except:
         pass
-    return False
