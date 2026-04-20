@@ -38,4 +38,4 @@
 Các file cấu hình nhạy cảm (`config.json`, `key.txt`, `proxies.txt`) đã được đưa vào `.gitignore` để tránh bị lộ thông tin khi đẩy lên GitHub.
 
 ---
-*Phát triển bởi Pham Doan Duc & Antigravity AI.*
+*Phát triển bởi Pham Doan Duc Admin VuaProxy.com & Antigravity AI.* =)))))
