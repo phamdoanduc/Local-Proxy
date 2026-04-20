@@ -5,6 +5,11 @@
 
 **VuaProxy - Local Proxy Engine** là một giải pháp Proxy Gateway hiệu năng cao, giúp chuyển đổi các hệ thống Proxy có xác thực (User/Pass) hoặc các Key xoay IP thành các cổng Local Proxy không xác thực. Công cụ được thiết kế dành riêng cho các tác vụ Automation và MMO quy mô lớn.
 
+## 🛒 Mua Proxy Ở Đâu?
+
+Để có trải nghiệm tốt nhất và được hỗ trợ tối ưu với bộ công cụ này, bạn có thể mua các loại Proxy xoay IP, Proxy dân cư chất lượng cao tại:
+👉 **[VuaProxy.com](https://vuaproxy.com)** - Hệ thống cung cấp Proxy hàng đầu Việt Nam.
+
 ## ✨ Tính năng nổi bật
 
 - **Kiến trúc Modular**: Dễ dàng bảo trì và mở rộng.
