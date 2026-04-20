@@ -2,7 +2,7 @@ import asyncio
 import base64
 
 class ProxyTunnel:
-    """Manages a single tunnel with aggressive RFC-compliant authentication handling."""
+    """Manages a tunnel with byte-perfect transparent proxy authentication."""
     
     def __init__(self, id, local_port, upstream_str):
         self.id = id
@@ -41,7 +41,7 @@ class ProxyTunnel:
         self.connections += 1
         target_reader, target_writer = None, None
         try:
-            # Read enough to get full headers
+            # Read until full header block is received
             header_data = b""
             while b"\r\n\r\n" not in header_data:
                 chunk = await reader.read(8192)
@@ -55,46 +55,49 @@ class ProxyTunnel:
                 self.upstream_host, int(self.upstream_port)
             )
 
-            # Aggressive RFC Injection
+            # Hyper Transparent Byte Injection
             if self.auth_header:
                 try:
-                    # Split into headers and body
-                    parts = header_data.split(b"\r\n\r\n", 1)
-                    header_block = parts[0].decode(errors='ignore')
-                    body = parts[1] if len(parts) > 1 else b""
-                    
-                    lines = header_block.split("\r\n")
-                    if lines:
-                        # 1. Clear existing auth headers
-                        new_lines = [lines[0]] # Keep request line
-                        for line in lines[1:]:
-                            if not line.lower().startswith("proxy-authorization:"):
-                                new_lines.append(line)
+                    # 1. Split headers from body at byte level
+                    h_end = header_data.find(b"\r\n\r\n")
+                    if h_end != -1:
+                        header_block = header_data[:h_end]
+                        body = header_data[h_end+4:]
                         
-                        # 2. Add our correct auth header and connection quality header
-                        new_lines.insert(1, f"Proxy-Authorization: {self.auth_header}")
-                        new_lines.insert(2, "Proxy-Connection: Keep-Alive")
-                        
-                        # 3. Assemble back with strict CRLF
-                        header_data = "\r\n".join(new_lines).encode() + b"\r\n\r\n" + body
-                except:
-                    pass # Fallback to original if processing fails
+                        header_lines = header_block.split(b"\r\n")
+                        if header_lines:
+                            # 2. Rebuild headers: Keep first line, Filter existing auth, Inject ours
+                            new_header_lines = [header_lines[0]]
+                            
+                            # Standard Proxy-Auth header to inject
+                            auth_line = f"Proxy-Authorization: {self.auth_header}".encode()
+                            new_header_lines.append(auth_line)
+                            
+                            # Filter out existing (client-side) auth headers
+                            for line in header_lines[1:]:
+                                if not line.lower().startswith(b"proxy-authorization:"):
+                                    new_header_lines.append(line)
+                            
+                            # 3. Re-assemble with strict RFC CRLFs
+                            header_data = b"\r\n".join(new_header_lines) + b"\r\n\r\n" + body
+                except: pass
 
             target_writer.write(header_data)
             await target_writer.drain()
 
-            async def pipe_upstream_to_client(r, w):
+            async def pipe_upstream(r, w):
                 try:
-                    first_packet = True
+                    is_first = True
                     while True:
                         data = await r.read(16384)
                         if not data: break
                         
-                        if first_packet:
+                        if is_first:
+                            # If upstream returns 407, silently fail to prevent popup
                             if b"HTTP/1.1 407" in data or b"HTTP/1.0 407" in data:
                                 self.status = "[bold red]AUTH FAIL (407)[/]"
                                 break
-                            first_packet = False
+                            is_first = False
                             self.status = "[green]ACTIVE[/]"
                             
                         w.write(data)
@@ -104,10 +107,10 @@ class ProxyTunnel:
                     try: w.close()
                     except: pass
 
-            async def pipe_client_to_upstream(r, w):
+            async def pipe_client(r, w):
                 try:
                     while True:
-                        data = await r.read(16384)
+                        data = await r.read(16383)
                         if not data: break
                         w.write(data)
                         await w.drain()
@@ -117,8 +120,8 @@ class ProxyTunnel:
                     except: pass
 
             await asyncio.gather(
-                pipe_client_to_upstream(reader, target_writer),
-                pipe_upstream_to_client(target_reader, writer)
+                pipe_client(reader, target_writer),
+                pipe_upstream(target_reader, writer)
             )
         except Exception:
             pass
