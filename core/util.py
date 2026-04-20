@@ -3,6 +3,7 @@ import os
 import sys
 import re
 import time
+import socket
 from rich.console import Console
 
 console = Console()
@@ -82,6 +83,24 @@ def load_keys():
         if cleaned:
             lines.append({"type": "api", "raw": cleaned})
     return lines
+
+def get_diagnostic_info():
+    """Provides a detailed diagnostic report of the environment."""
+    exe_path = sys.argv[0]
+    cwd = os.getcwd()
+    
+    report = "\n--- [DIAGNOSTIC INFO] ---\n"
+    report += f"EXE Path: {exe_path}\n"
+    report += f"CWD Path: {cwd}\n"
+    report += "File Status:\n"
+    
+    for f in ["config.json", "proxies.txt", "key.txt"]:
+        p = find_file(f)
+        status = f"[FOUND at {p}]" if p else "[NOT FOUND]"
+        report += f"  - {f}: {status}\n"
+    
+    report += "-------------------------\n"
+    return report
 
 def clear_port(port):
     """Clears a port using a non-blocking PowerShell command with timeout."""
