@@ -1,62 +1,57 @@
 import asyncio
-import sys
 import time
+import sys
+from rich.live import Live
 from rich.console import Console
 from rich.table import Table
-from rich.live import Live
-
+from rich.panel import Panel
+from rich.layout import Layout
 from core.manager import ProxyManager
-from core.util import format_uptime
+from core.util import format_uptime, get_diagnostic_info
 
 console = Console()
 
 def generate_dashboard(manager, start_time):
-    """Generates the Rich table for the dashboard."""
-    uptime = time.time() - start_time
-    use_key = manager.config.get("use_key_proxy", True)
-    mode = "[KEY MODE]" if use_key else "[STATIC MODE]"
+    """Generates the live dashboard table with unified rotation timing."""
+    uptime = format_uptime(time.time() - start_time)
+    mode = "[KEY MODE]" if manager.config.get("use_key_proxy") else "[STATIC MODE]"
     
-    table = Table(
-        title=f"VuaProxy - Local Proxy {mode} - Up: {format_uptime(uptime)}", 
-        border_style="bright_blue", 
-        title_style="bold cyan"
-    )
-    
-    table.add_column("ID", justify="center", style="dim")
-    table.add_column("LOCAL GATEWAY", style="bright_white bold")
-    table.add_column("API IP:PORT", style="green bold")
-    table.add_column("STATUS", justify="center")
+    table = Table(title=f"VuaProxy - Local Proxy {mode} - Up: {uptime}", expand=True)
+    table.add_column("ID", justify="center", style="cyan", no_wrap=True)
+    table.add_column("LOCAL GATEWAY", justify="left", style="white")
+    table.add_column("API IP:PORT", justify="left", style="magenta")
+    table.add_column("STATUS", justify="center", style="green")
     table.add_column("COOLDOWN", justify="center", style="yellow")
-    table.add_column("CONNS", justify="right")
-    
-    for t in manager.tunnels:
-        cooldown = "N/A"
-        if hasattr(t, 'rotator'):
-            rem = t.rotator.get_remaining_cooldown()
-            cooldown = f"{rem}s" if rem > 0 else "[green]READY[/]"
-            
+    table.add_column("CONNS", justify="center", style="white")
+
+    for tunnel in manager.tunnels:
+        status = "ACTIVE" if tunnel.is_active else "ERROR"
+        status_style = "green" if tunnel.is_active else "bold red"
+        
+        # Use the unified rotation status from manager
+        cooldown_display = manager.get_rotation_status(tunnel)
+        
         table.add_row(
-            str(t.id),
-            f"127.0.0.1:{t.local_port}",
-            str(t.upstream_str),
-            t.status,
-            cooldown,
-            str(t.connections)
+            str(tunnel.id),
+            f"127.0.0.1:{tunnel.target_port}",
+            tunnel.upstream_addr if tunnel.upstream_addr else "0.0.0.0:0",
+            f"[{status_style}]{status}[/]",
+            cooldown_display,
+            str(tunnel.connection_count)
         )
     return table
 
 async def handle_input(manager):
-    """Listens for keyboard input without blocking."""
+    """Handles async keyboard input for manual rotation and quit."""
     import msvcrt
-    while True:
-        try:
-            if msvcrt.kbhit():
-                key = msvcrt.getch().decode('utf-8').lower()
-                if key == 'r':
-                    await manager.rotate_all_manual()
-                elif key == 'q':
-                    return "QUIT"
-        except: pass
+    while manager.is_running:
+        if msvcrt.kbhit():
+            key = msvcrt.getch().decode('utf-8').lower()
+            if key == 'r':
+                await manager.rotate_all()
+            elif key == 'q':
+                await manager.stop_all()
+                break
         await asyncio.sleep(0.1)
 
 async def main():
@@ -64,14 +59,13 @@ async def main():
         manager = ProxyManager()
         start_time = time.time()
         
-        console.print("[bold green][*] Initializing VuaProxy Core v5.8 [Vua Hybrid]...[/]")
+        console.print("[bold green][*] Initializing VuaProxy Core v6.2.1 [Parsing Pro]...[/]")
         
         # Start all tunnels once
         await manager.start_all()
         
         if not manager.tunnels:
             console.print("[bold red][!] No proxies found. Please check your config and data files.[/]")
-            from core.util import get_diagnostic_info
             console.print(get_diagnostic_info())
             input("\nPress Enter to exit...")
             return
@@ -80,25 +74,24 @@ async def main():
 
         input_task = asyncio.create_task(handle_input(manager))
         
-        with Live(generate_dashboard(manager, start_time), refresh_per_second=2) as live:
+        with Live(generate_dashboard(manager, start_time), refresh_per_second=1) as live:
             while not input_task.done():
                 live.update(generate_dashboard(manager, start_time))
-                await asyncio.sleep(0.5)
-            
-            if input_task.result() == "QUIT":
-                pass
+                await asyncio.sleep(1)
                 
+    except KeyboardInterrupt:
+        await manager.stop_all()
     except Exception as e:
-        console.print(f"\n[bold red][FATAL ERROR] {str(e)}[/]")
+        console.print(f"[bold red][FATAL ERROR] {e}[/]")
+        from core.util import get_diagnostic_info
+        console.print(get_diagnostic_info())
         import traceback
-        console.print(traceback.format_exc())
+        traceback.print_exc()
         input("\nPress Enter to exit and check logs...")
     finally:
-        console.print("\n[yellow][*] Shutting down Core Engine...[/]")
-        await manager.stop_all()
+        console.print("[bold yellow][*] VuaProxy Engine stopped.[/]")
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main())

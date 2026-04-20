@@ -3,142 +3,145 @@ import base64
 import socket
 
 class ProxyTunnel:
-    """Manages a tunnel with robust DNS support and domain name handling."""
+    """Universal Pipe v6.2.1: Robust multi-format parsing (supports user:pass@host:port)."""
     
-    def __init__(self, id, local_port, upstream_str):
+    def __init__(self, id, target_port, upstream_addr_raw):
         self.id = id
-        self.local_port = local_port
-        self.upstream_str = upstream_str
-        self.status = "[yellow]WAITING[/]"
+        self.target_port = target_port
+        self.upstream_addr_raw = upstream_addr_raw
+        self.is_active = False
         self.auth_header = None
-        self.connections = 0
+        self.connection_count = 0
         self.server = None
         
         self.upstream_host = None
         self.upstream_port = None
-        self._parse_upstream(upstream_str)
+        self._parse_upstream(upstream_addr_raw)
 
     def _parse_upstream(self, s):
+        """Robustly extracts host, port and credentials from multiple formats."""
         try:
-            # Domain Truncation for UI
+            s = s.strip()
             display_str = s
-            if len(s) > 25:
-                display_str = s[:22] + "..."
-            self.upstream_str = display_str
-
+            
             if "@" in s:
-                auth, addr = s.split("@")
-                self.upstream_host, self.upstream_port = addr.split(":")
-                self.auth_header = f"Basic {base64.b64encode(auth.encode()).decode()}"
-                # Update display to show domain instead of full auth string
-                self.upstream_str = addr if len(addr) <= 25 else addr[:22] + "..."
+                # Format: user:pass@host:port
+                auth_part, addr_part = s.rsplit("@", 1)
+                self.upstream_host, self.upstream_port = addr_part.rsplit(":", 1)
+                self.upstream_port = int(self.upstream_port)
+                self.auth_header = f"Basic {base64.b64encode(auth_part.encode()).decode()}"
+                display_str = addr_part
             else:
                 parts = s.split(":")
-                if len(parts) == 4:
-                    self.upstream_host, self.upstream_port = parts[0], parts[1]
+                if len(parts) >= 4:
+                    # Format: host:port:user:pass
+                    self.upstream_host = parts[0]
+                    self.upstream_port = int(parts[1])
                     auth = f"{parts[2]}:{parts[3]}"
                     self.auth_header = f"Basic {base64.b64encode(auth.encode()).decode()}"
-                    host_port = f"{parts[0]}:{parts[1]}"
-                    self.upstream_str = host_port if len(host_port) <= 25 else host_port[:22] + "..."
-                else:
-                    self.upstream_host, self.upstream_port = parts[0], int(parts[1])
-                    host_port = f"{parts[0]}:{parts[1]}"
-                    self.upstream_str = host_port if len(host_port) <= 25 else host_port[:22] + "..."
+                    display_str = f"{parts[0]}:{parts[1]}"
+                elif len(parts) == 2:
+                    # Format: host:port (No auth)
+                    self.upstream_host = parts[0]
+                    self.upstream_port = int(parts[1])
+                    display_str = s
+            
+            # Truncate for UI
+            self.upstream_addr = display_str if len(display_str) <= 30 else display_str[:27] + "..."
         except Exception:
-            self.status = "[red]PARSE ERR[/]"
+            self.upstream_addr = "Parse Error"
+
+    def update_upstream(self, new_upstream):
+        """Updates the upstream target for the next new connection."""
+        self._parse_upstream(new_upstream)
 
     async def _bridge(self, reader, writer):
-        self.connections += 1
-        target_reader, target_writer = None, None
+        """Dual-Mode Handshaking (CONNECT vs Header Injection)."""
+        target_writer = None
         try:
-            header_data = b""
-            while b"\r\n\r\n" not in header_data:
-                chunk = await reader.read(8192)
-                if not chunk: break
-                header_data += chunk
+            self.connection_count += 1
             
-            if not header_data: return
+            data = await reader.read(8192)
+            if not data: return
             
-            # Connect to upstream (handles both IP and Domain)
-            try:
-                target_reader, target_writer = await asyncio.open_connection(
-                    self.upstream_host, int(self.upstream_port)
-                )
-            except socket.gaierror:
-                self.status = "[bold red]DNS ERROR[/]"
-                return
-            except Exception as e:
-                self.status = f"[red]CONN FAIL[/]"
-                return
+            header_text = data.decode(errors='ignore')
+            lines = header_text.split("\r\n")
+            if not lines: return
+            
+            first_line = lines[0]
+            is_connect = first_line.startswith("CONNECT")
+            
+            target_reader, target_writer = await asyncio.open_connection(
+                self.upstream_host, int(self.upstream_port)
+            )
+            
+            if is_connect:
+                target = first_line.split(" ")[1]
+                auth_line = f"Proxy-Authorization: {self.auth_header}\r\n" if self.auth_header else ""
+                handshake = f"CONNECT {target} HTTP/1.1\r\n{auth_line}Connection: keep-alive\r\n\r\n"
+                target_writer.write(handshake.encode())
+                await target_writer.drain()
+                
+                resp = await target_reader.read(4096)
+                if b"200" in resp.split(b"\r\n")[0]:
+                    writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
+                    await writer.drain()
+                else:
+                    writer.close()
+                    return
+            else:
+                # HTTP Mode: Inject auth header
+                if self.auth_header and "Proxy-Authorization" not in header_text:
+                    insertion_point = header_text.find("\r\n")
+                    if insertion_point != -1:
+                        new_header = (
+                            header_text[:insertion_point + 2] + 
+                            f"Proxy-Authorization: {self.auth_header}\r\n" + 
+                            header_text[insertion_point + 2:]
+                        )
+                        target_writer.write(new_header.encode())
+                    else:
+                        target_writer.write(data)
+                else:
+                    target_writer.write(data)
+                await target_writer.drain()
 
-            # Auth injection logic
-            if self.auth_header:
+            async def pipe(r, w):
                 try:
-                    h_end = header_data.find(b"\r\n\r\n")
-                    if h_end != -1:
-                        header_block = header_data[:h_end]
-                        body = header_data[h_end+4:]
-                        header_lines = header_block.split(b"\r\n")
-                        if header_lines:
-                            new_header_lines = [header_lines[0]]
-                            auth_line = f"Proxy-Authorization: {self.auth_header}".encode()
-                            new_header_lines.append(auth_line)
-                            for line in header_lines[1:]:
-                                if not line.lower().startswith(b"proxy-authorization:"):
-                                    new_header_lines.append(line)
-                            header_data = b"\r\n".join(new_header_lines) + b"\r\n\r\n" + body
-                except: pass
-
-            target_writer.write(header_data)
-            await target_writer.drain()
-
-            async def pipe(r, w, is_upstream=False):
-                try:
-                    is_first = True
                     while True:
-                        data = await r.read(16384)
-                        if not data: break
-                        if is_first and is_upstream:
-                            if b"HTTP/1.1 407" in data or b"HTTP/1.0 407" in data:
-                                self.status = "[bold red]AUTH FAIL (407)[/]"
-                                break
-                            is_first = False
-                            self.status = "[green]ACTIVE[/]"
-                        w.write(data)
+                        chunk = await r.read(16384)
+                        if not chunk: break
+                        w.write(chunk)
                         await w.drain()
                 except: pass
                 finally:
                     try: w.close()
                     except: pass
 
-            await asyncio.gather(
-                pipe(reader, target_writer),
-                pipe(target_reader, writer, is_upstream=True)
-            )
+            await asyncio.gather(pipe(reader, target_writer), pipe(target_reader, writer))
+
         except Exception:
             pass
         finally:
-            self.connections -= 1
-            if writer: 
-                try: writer.close()
-                except: pass
-            if target_writer: 
+            self.connection_count = max(0, self.connection_count - 1)
+            try: writer.close()
+            except: pass
+            if target_writer:
                 try: target_writer.close()
                 except: pass
 
     async def start(self):
-        if not self.upstream_host:
-            return False
+        """Starts the gateway server."""
         try:
-            self.server = await asyncio.start_server(self._bridge, '127.0.0.1', self.local_port)
-            self.status = "[green]ACTIVE[/]"
+            self.server = await asyncio.start_server(self._bridge, '127.0.0.1', self.target_port)
+            self.is_active = True
             return True
-        except Exception as e:
-            self.status = f"[red]ERR: {str(e)[:15]}[/]"
+        except:
             return False
 
     async def stop(self):
+        """Gracefully stops the gateway server."""
         if self.server:
+            self.is_active = False
             self.server.close()
             await self.server.wait_closed()
-            self.status = "[white]CLOSED[/]"

@@ -1,115 +1,150 @@
 import asyncio
+import time
+import socket
+from rich.console import Console
 from core.tunnel import ProxyTunnel
-from core.util import load_config, load_proxies
+from core.rotator import VuaProxyRotator
+from core.util import load_config, load_proxies, load_keys, clear_port
+
+console = Console()
 
 class ProxyManager:
-    """Orchestrates multiple proxy tunnels with granular logging and timeouts."""
+    """Manages tunnels with integrated 'Exit Latency' monitoring to detect poor proxy performance."""
     
     def __init__(self):
         self.tunnels = []
+        self.is_running = True
         self.config = load_config()
-        self.start_port = self.config.get("start_port", 1112)
-        self.is_running = False
-
-    def reload_data(self):
-        """Reloads config from disk."""
-        self.config = load_config()
-        self.start_port = self.config.get("start_port", 1112)
+        self.rotation_enabled = self.config.get("rotation_enabled", False)
+        self.rotation_interval = self.config.get("rotation_interval", 300)
+        self._loop_task = None
+        self._health_task = None
 
     async def start_all(self):
-        """Initializes and starts tunnels with step-by-step progress tracking."""
-        from core.util import clear_port, load_proxies, load_keys
-        from core.rotator import VuaProxyRotator
-        from rich.console import Console
-        console = Console()
-        
+        """Initializes tunnels and starts background monitoring tasks."""
         self.tunnels = []
-        use_key = self.config.get("use_key_proxy", True)
-        all_proxies = load_keys() if use_key else load_proxies()
+        use_key = self.config.get("use_key_proxy", False)
         
-        console.print(f"[*] Found {len(all_proxies)} proxy configurations.")
-        
-        for i, info in enumerate(all_proxies):
+        proxy_data = load_keys() if use_key else load_proxies()
+        start_port = self.config.get("start_port", 5555)
+
+        for i, item in enumerate(proxy_data):
             tunnel_id = i + 1
-            target_port = self.start_port + i
-            raw = info["raw"]
+            target_port = start_port + i
             
-            console.print(f"[dim]=> [{tunnel_id}] Initializing port {target_port}...[/]")
+            console.print(f"[bold blue]=> [{tunnel_id}] Initializing port {target_port}...[/]")
             
             try:
-                if info["type"] == "api" or raw.startswith("API|"):
-                    api_key = raw.replace("API|", "")
-                    rotator = VuaProxyRotator(api_key)
-                    
-                    console.print(f"[dim]   > [{tunnel_id}] Requesting IP from API...[/]")
-                    try:
-                        # API call with internal timeout from rotator.py
-                        upstream = await rotator.rotate()
-                    except:
-                        upstream = None
-                        
-                    if not upstream: 
-                        error_msg = getattr(rotator, 'last_error', 'Unknown Error')
-                        console.print(f"[red]   ! [{tunnel_id}] API Failure: {error_msg}[/]")
-                        upstream = "0.0.0.0:0"
-                    
-                    tunnel = ProxyTunnel(tunnel_id, target_port, upstream)
-                    tunnel.rotator = rotator
-                else:
-                    tunnel = ProxyTunnel(tunnel_id, target_port, raw)
-                
-                console.print(f"[dim]   > [{tunnel_id}] Clearing existing port {target_port}...[/]")
                 clear_port(target_port)
+                upstream = item.get("raw")
+                rotator = None
                 
-                console.print(f"[dim]   > [{tunnel_id}] Starting Gateway...[/]")
-                success = await tunnel.start()
+                if item.get("type") == "api":
+                    console.print(f"   > [{tunnel_id}] Requesting IP from API...")
+                    rotator = VuaProxyRotator(upstream)
+                    upstream = await rotator.rotate()
                 
-                if success:
+                tunnel = ProxyTunnel(tunnel_id, target_port, upstream)
+                if rotator: 
+                    tunnel.rotator = rotator
+                    tunnel.last_rotation_time = time.time()
+                
+                if await tunnel.start():
                     self.tunnels.append(tunnel)
-                    console.print(f"[green]   + [{tunnel_id}] Started Successfully.[/]")
-                else:
-                    console.print(f"[red]   - [{tunnel_id}] Gateway Start Failed.[/]")
-                    
+                    console.print(f"   [green]+ [{tunnel_id}] Started Successfully.[/]")
             except Exception as e:
-                console.print(f"[bold red]   !!! [{tunnel_id}] Fatal Error: {str(e)}[/]")
+                console.print(f"   [bold red][!] Failed: {e}[/]")
 
-        # Start background rotation task if enabled
-        if self.config.get("rotation_enabled"):
-            asyncio.create_task(self._rotation_loop())
+        if self.rotation_enabled:
+            self._loop_task = asyncio.create_task(self._rotation_loop())
+            self._health_task = asyncio.create_task(self._health_check_loop())
+
+    def get_rotation_status(self, tunnel):
+        """Returns visual timing or latency-based health status."""
+        if not hasattr(tunnel, 'rotator'):
+            return "N/A"
         
-        self.is_running = True
+        if getattr(tunnel, 'is_lagging', False):
+            return "[bold red]LAG (Rotating...)[/]"
+
+        current_time = time.time()
+        elapsed = current_time - getattr(tunnel, 'last_rotation_time', 0)
+        wait_interval = int(self.rotation_interval - elapsed)
+        
+        if wait_interval > 0:
+            return f"WAIT {wait_interval}s"
+        
+        api_wait = tunnel.rotator.get_remaining_cooldown()
+        return f"API WAIT {api_wait}s" if api_wait > 0 else "READY"
+
+    async def _health_check_loop(self):
+        """Monitors real internet throughput (Exit Latency) for each proxy."""
+        while self.is_running:
+            await asyncio.sleep(20) # Check every 20 seconds
+            for tunnel in self.tunnels:
+                if hasattr(tunnel, 'rotator') and hasattr(tunnel, 'upstream_host'):
+                    try:
+                        start = time.perf_counter()
+                        # Test End-to-End Handshake through the proxy to Cloudflare DNS
+                        loop = asyncio.get_event_loop()
+                        
+                        def probe_exit():
+                            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                                s.settimeout(5.0) # 5 second exit threshold
+                                s.connect((tunnel.upstream_host, int(tunnel.upstream_port)))
+                                
+                                # Send proxy handshake to test exit internet speed
+                                auth_line = f"Proxy-Authorization: {tunnel.auth_header}\r\n" if tunnel.auth_header else ""
+                                handshake = f"CONNECT 1.1.1.1:80 HTTP/1.1\r\n{auth_line}\r\n"
+                                s.sendall(handshake.encode())
+                                
+                                # Wait for response
+                                resp = s.recv(1024).decode(errors='ignore')
+                                return "200" in resp.split("\r\n")[0]
+
+                        success = await loop.run_in_executor(None, probe_exit)
+                        
+                        if success:
+                            latency = int((time.perf_counter() - start) * 1000)
+                            tunnel.last_ping = latency
+                            tunnel.is_lagging = False
+                        else:
+                            raise Exception("Proxy Exit Denied")
+
+                    except Exception:
+                        # Failed or exit latency > 5s
+                        tunnel.last_ping = 9999
+                        tunnel.is_lagging = True
+                        console.print(f"[bold red][!] Gate {tunnel.id} Exit Lag! Rotating IP...[/]")
+                        await self._rotate_single(tunnel, force=True)
+
+    async def _rotate_single(self, tunnel, force=False):
+        """Rotates upstream proxy, enforcing user intervals unless forced."""
+        current_time = time.time()
+        elapsed = current_time - getattr(tunnel, 'last_rotation_time', 0)
+        
+        if not force and elapsed < self.rotation_interval:
+            return
+
+        if tunnel.rotator.get_remaining_cooldown() == 0:
+            new_upstream = await tunnel.rotator.rotate()
+            if new_upstream:
+                tunnel.update_upstream(new_upstream)
+                tunnel.last_rotation_time = current_time
+                tunnel.is_lagging = False
 
     async def _rotation_loop(self):
-        """Background task to periodically rotate API-based proxies."""
+        """Rotation loop."""
         while self.is_running:
-            await asyncio.sleep(10)
-            for tunnel in self.tunnels:
-                if hasattr(tunnel, 'rotator'):
-                    if tunnel.rotator.get_remaining_cooldown() == 0:
-                        try:
-                            new_upstream = await tunnel.rotator.rotate()
-                            if new_upstream:
-                                tunnel._parse_upstream(new_upstream)
-                        except: pass
-
-    async def rotate_all_manual(self):
-        """Forces a manual rotation cycle for all API-based tunnels."""
-        tasks = []
-        for tunnel in self.tunnels:
-            if hasattr(tunnel, 'rotator'):
-                tasks.append(tunnel.rotator.rotate())
-        
-        if not tasks: return
-        
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        api_tunnels = [t for t in self.tunnels if hasattr(t, 'rotator')]
-        
-        for i, new_upstream in enumerate(results):
-            if isinstance(new_upstream, str) and new_upstream and i < len(api_tunnels):
-                api_tunnels[i]._parse_upstream(new_upstream)
+            await asyncio.sleep(1)
+            if self.rotation_enabled:
+                for tunnel in self.tunnels:
+                    if hasattr(tunnel, 'rotator'):
+                        await self._rotate_single(tunnel)
 
     async def stop_all(self):
-        """Stops all running tunnels."""
-        for tunnel in self.tunnels:
-            await tunnel.stop()
+        """Cleanup."""
         self.is_running = False
+        if self._loop_task: self._loop_task.cancel()
+        if self._health_task: self._health_task.cancel()
+        for tunnel in self.tunnels: await tunnel.stop()

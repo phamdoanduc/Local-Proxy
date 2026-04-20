@@ -4137,6 +4137,10 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\jupyter.py',
    'PYMODULE'),
+  ('rich.layout',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\layout.py',
+   'PYMODULE'),
   ('rich.live',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\live.py',
@@ -4248,6 +4252,10 @@
   ('rich.traceback',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\traceback.py',
+   'PYMODULE'),
+  ('rich.tree',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\tree.py',
    'PYMODULE'),
   ('runpy',
    'C:\\Users\\my '
