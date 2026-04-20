@@ -64,7 +64,7 @@ async def main():
         manager = ProxyManager()
         start_time = time.time()
         
-        console.print("[bold green][*] Initializing VuaProxy Core v4.7 [Ultra Robust]...[/]")
+        console.print("[bold green][*] Initializing VuaProxy Core v4.8 [Stealth Auth]...[/]")
         
         # Start all tunnels once
         await manager.start_all()

@@ -2,12 +2,12 @@ import asyncio
 import base64
 
 class ProxyTunnel:
-    """Manages a single tunnel from a local port to an upstream proxy."""
+    """Manages a single tunnel with robust stealth authentication handling."""
     
     def __init__(self, id, local_port, upstream_str):
         self.id = id
         self.local_port = local_port
-        self.upstream_str = upstream_str # IP:PORT for display
+        self.upstream_str = upstream_str
         self.status = "[yellow]WAITING[/]"
         self.auth_header = None
         self.connections = 0
@@ -41,28 +41,55 @@ class ProxyTunnel:
         self.connections += 1
         target_reader, target_writer = None, None
         try:
-            header_data = await reader.read(8192)
+            # Read initial request header
+            header_data = await reader.read(16384)
             if not header_data: return
             
+            # Connect to upstream
             target_reader, target_writer = await asyncio.open_connection(
                 self.upstream_host, int(self.upstream_port)
             )
 
+            # Inject Auth Header if allowed
             if self.auth_header:
                 header_text = header_data.decode(errors='ignore')
                 if "Proxy-Authorization" not in header_text:
                     lines = header_text.split("\r\n")
-                    if len(lines) > 1:
+                    if len(lines) > 0:
+                        # Insert right after the first line (HTTP Method line)
                         lines.insert(1, f"Proxy-Authorization: {self.auth_header}")
                         header_data = "\r\n".join(lines).encode()
 
             target_writer.write(header_data)
             await target_writer.drain()
 
-            async def pipe(r, w):
+            async def pipe_upstream_to_client(r, w):
+                """Special pipe to filter out 407 challenges from upstream."""
+                try:
+                    first_packet = True
+                    while True:
+                        data = await r.read(16384)
+                        if not data: break
+                        
+                        # Stealth Auth: If upstream returns 407, DON'T pass it to client
+                        if first_packet:
+                            if b"HTTP/1.1 407" in data or b"HTTP/1.0 407" in data:
+                                # Auth failed upstream, close early instead of showing popup
+                                break
+                            first_packet = False
+                            
+                        w.write(data)
+                        await w.drain()
+                except: pass
+                finally:
+                    try: w.close()
+                    except: pass
+
+            async def pipe_client_to_upstream(r, w):
+                """Transparent pipe for the rest of the connection."""
                 try:
                     while True:
-                        data = await r.read(8192)
+                        data = await r.read(16384)
                         if not data: break
                         w.write(data)
                         await w.drain()
@@ -72,15 +99,19 @@ class ProxyTunnel:
                     except: pass
 
             await asyncio.gather(
-                pipe(reader, target_writer),
-                pipe(target_reader, writer)
+                pipe_client_to_upstream(reader, target_writer),
+                pipe_upstream_to_client(target_reader, writer)
             )
         except Exception:
             pass
         finally:
             self.connections -= 1
-            if writer: writer.close()
-            if target_writer: target_writer.close()
+            if writer: 
+                try: writer.close()
+                except: pass
+            if target_writer: 
+                try: target_writer.close()
+                except: pass
 
     async def start(self):
         if not self.upstream_host:
