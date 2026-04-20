@@ -8,13 +8,13 @@ class ProxyManager:
     def __init__(self):
         self.tunnels = []
         self.config = load_config()
-        self.start_port = self.config.get("start_port", 8001)
+        self.start_port = self.config.get("start_port", 1112)
         self.is_running = False
 
     def reload_data(self):
         """Reloads config from disk."""
         self.config = load_config()
-        self.start_port = self.config.get("start_port", 8001)
+        self.start_port = self.config.get("start_port", 1112)
 
     async def start_all(self):
         """Initializes and starts all tunnels from the chosen source."""
@@ -26,9 +26,6 @@ class ProxyManager:
         use_key = self.config.get("use_key_proxy", True)
         all_proxies = load_keys() if use_key else load_proxies()
         
-        mode_str = "KEY MODE" if use_key else "STATIC MODE"
-        print(f"[*] Starting in {mode_str}...")
-        
         for i, info in enumerate(all_proxies):
             raw = info["raw"]
             target_port = self.start_port + i
@@ -37,7 +34,6 @@ class ProxyManager:
                 api_key = raw.replace("API|", "")
                 rotator = VuaProxyRotator(api_key)
                 
-                print(f"[*] Initial rotation for Key on Port {target_port}...")
                 upstream = await rotator.rotate()
                 if not upstream: upstream = "0.0.0.0:0"
                 
@@ -63,7 +59,6 @@ class ProxyManager:
             for tunnel in self.tunnels:
                 if hasattr(tunnel, 'rotator'):
                     if tunnel.rotator.get_remaining_cooldown() == 0:
-                        print(f"[*] Auto-Rotating Port {tunnel.local_port}...")
                         new_upstream = await tunnel.rotator.rotate()
                         if new_upstream:
                             tunnel._parse_upstream(new_upstream)

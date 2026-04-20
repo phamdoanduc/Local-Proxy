@@ -18,31 +18,37 @@ def format_uptime(seconds):
     return f"{h}h {m}m {s}s"
 
 def load_config(file_name="config.json"):
-    """Loads configuration settings."""
+    """Loads configuration settings - Clean VuaProxy Version."""
     base = get_base_path()
     file_path = os.path.join(base, file_name)
     
+    # Standard VuaProxy Defaults
+    defaults = {
+        "start_port": 1112,
+        "rotation_enabled": True,
+        "rotation_interval": 300,
+        "use_key_proxy": True
+    }
+    
     if not os.path.exists(file_path):
-        return {
-            "start_port": 1112,
-            "rotation_interval": 300,
-            "rotation_enabled": True,
-            "use_key_proxy": True,
-            "token_proxy_port": 9898
-        }
+        # Create a clean config for the user if it doesn't exist
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(defaults, f, indent=2)
+        except: pass
+        return defaults
     
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             config = json.load(f)
             return {
                 "start_port": config.get("start_port", 1112),
-                "rotation_interval": config.get("rotation_interval", 300),
                 "rotation_enabled": config.get("rotation_enabled", True),
-                "use_key_proxy": config.get("use_key_proxy", True),
-                "token_proxy_port": config.get("token_proxy_port", 9898)
+                "rotation_interval": config.get("rotation_interval", 300),
+                "use_key_proxy": config.get("use_key_proxy", True)
             }
     except Exception:
-        return {"start_port": 1112}
+        return defaults
 
 def load_proxies(file_name="proxies.txt"):
     """Loads static proxies from file."""
@@ -75,8 +81,6 @@ def load_keys(file_name="key.txt"):
 def clear_port(port):
     import subprocess
     try:
-        # Silently attempt to clear port
         cmd = f"Stop-Process -Id (Get-NetTCPConnection -LocalPort {port}).OwningProcess -Force"
         subprocess.run(["powershell", "-Command", cmd], capture_output=True)
-    except:
-        pass
+    except: pass
