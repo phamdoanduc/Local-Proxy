@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.vscode/
+
+# Security - Do not upload keys to GitHub
+config.json
+key.txt
+proxies.txt
+vuaproxy.com.txt
+checker.py
+check_ip.py
