@@ -64,13 +64,15 @@ async def main():
         manager = ProxyManager()
         start_time = time.time()
         
-        console.print("[bold green][*] Initializing VuaProxy Core v4.5 [Final Fix]...[/]")
+        console.print("[bold green][*] Initializing VuaProxy Core v4.6 [Absolute Zero]...[/]")
         
         # Start all tunnels once
         await manager.start_all()
         
         if not manager.tunnels:
             console.print("[bold red][!] No proxies found. Please check your config and data files.[/]")
+            from core.util import get_diagnostic_info
+            console.print(get_diagnostic_info())
             input("\nPress Enter to exit...")
             return
 

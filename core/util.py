@@ -6,16 +6,38 @@ import time
 def get_paths_to_check():
     """Returns a list of potential directories where config files might exist."""
     paths = []
-    # 1. Current Working Directory (where the user is in CMD)
-    paths.append(os.path.abspath("."))
+    # 1. Current Working Directory
+    paths.append(os.getcwd())
     # 2. Directory where the .exe or script is located
     if hasattr(sys, '_MEIPASS'):
         paths.append(os.path.dirname(sys.executable))
     else:
         paths.append(os.path.dirname(os.path.abspath(__file__)))
-        paths.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
+    # 3. Handle possible renamed executable path
+    try:
+        paths.append(os.path.dirname(os.path.realpath(sys.argv[0])))
+    except: pass
+        
     return list(dict.fromkeys(paths)) # Remove duplicates
+
+def get_diagnostic_info():
+    """Returns a string with diagnostic info about search paths."""
+    info = "\n--- [DIAGNOSTIC INFO] ---\n"
+    info += f"EXE Path: {sys.executable}\n"
+    info += f"CWD Path: {os.getcwd()}\n"
+    info += "Search Directories:\n"
+    for p in get_paths_to_check():
+        info += f"  > {p}\n"
+    
+    files = ["config.json", "proxies.txt", "key.txt"]
+    info += "File Status:\n"
+    for f in files:
+        path = find_file(f)
+        status = f"[FOUND at {path}]" if path else "[NOT FOUND]"
+        info += f"  - {f}: {status}\n"
+    info += "-------------------------\n"
+    return info
 
 def find_file(file_name):
     """Robustly searches for a file in multiple potential locations."""
@@ -38,61 +60,62 @@ def load_config(file_name="config.json"):
     file_path = find_file(file_name)
     
     defaults = {
-        "start_port": 1112,
-        "rotation_enabled": True,
+        "start_port": 5555,
+        "rotation_enabled": False,
         "rotation_interval": 300,
-        "use_key_proxy": True
+        "use_key_proxy": False
     }
     
     if not file_path:
-        # Last resort: Try to create it in the SAME folder as the EXE
-        exe_dir = os.path.dirname(sys.executable) if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
-        new_path = os.path.join(exe_dir, file_name)
-        try:
-            if not os.path.exists(new_path):
-                with open(new_path, "w", encoding="utf-8") as f:
-                    json.dump(defaults, f, indent=2)
-        except: pass
         return defaults
     
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8-sig") as f: # Supports BOM
             config = json.load(f)
             return {
-                "start_port": config.get("start_port", 1112),
-                "rotation_enabled": config.get("rotation_enabled", True),
+                "start_port": config.get("start_port", 5555),
+                "rotation_enabled": config.get("rotation_enabled", False),
                 "rotation_interval": config.get("rotation_interval", 300),
-                "use_key_proxy": config.get("use_key_proxy", True)
+                "use_key_proxy": config.get("use_key_proxy", False)
             }
     except Exception:
         return defaults
 
 def load_proxies(file_name="proxies.txt"):
-    """Loads static proxies using redundant path checking."""
+    """Loads static proxies with wide encoding support."""
     file_path = find_file(file_name)
     proxies = []
     if file_path:
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line:
-                        proxies.append({"type": "static", "raw": line})
-        except: pass
+            # Try UTF-8 then Latin-1 for maximum compatibility
+            with open(file_path, "r", encoding="utf-8-sig") as f:
+                lines = f.readlines()
+        except:
+            with open(file_path, "r", encoding="latin-1") as f:
+                lines = f.readlines()
+                
+        for line in lines:
+            line = line.strip()
+            if line:
+                proxies.append({"type": "static", "raw": line})
     return proxies
 
 def load_keys(file_name="key.txt"):
-    """Loads rotation keys using redundant path checking."""
+    """Loads rotation keys with wide encoding support."""
     file_path = find_file(file_name)
     keys = []
     if file_path:
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line:
-                        keys.append({"type": "api", "raw": line})
-        except: pass
+            with open(file_path, "r", encoding="utf-8-sig") as f:
+                lines = f.readlines()
+        except:
+            with open(file_path, "r", encoding="latin-1") as f:
+                lines = f.readlines()
+                
+        for line in lines:
+            line = line.strip()
+            if line:
+                keys.append({"type": "api", "raw": line})
     return keys
 
 def clear_port(port):
