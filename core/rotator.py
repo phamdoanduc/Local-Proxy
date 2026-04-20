@@ -3,47 +3,41 @@ import asyncio
 import time
 
 class VuaProxyRotator:
-    """Handles API requests to VuaProxy for IP rotation."""
+    """Handles API requests to VuaProxy to rotate and fetch proxy status."""
     
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = "https://vuaproxy.com/api/v1/users/rotatev2"
-        self.last_proxy = None
-        self.next_rotate_allowed = 0
-        self.status = "IDLE"
-
-    async def rotate(self, check_only=False):
-        """Calls the rotation API."""
-        url = f"{self.base_url}?token={self.api_key}"
-        if check_only:
-            url += "&checkOnly=true"
-            
-        self.status = "ROTATING..."
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, timeout=10) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        
-                        # Always sync cooldown if timeRemaining is present
-                        if "timeRemaining" in data:
-                            self.next_rotate_allowed = time.time() + int(data["timeRemaining"])
-
-                        if data.get("status") == "success":
-                            self.last_proxy = data.get("proxy")
-                            self.status = "SUCCESS"
-                            return self.last_proxy
-                        else:
-                            msg = data.get("message", "FAILED")
-                            self.status = f"ERR: {msg[:15]}"
-                    else:
-                        self.status = f"HTTP {response.status}"
-        except Exception as e:
-            self.status = f"ERR: {str(e)[:15]}"
-        
-        return None
+        self.api_url = f"https://api.vuaproxy.com/rotate/{api_key}"
+        self.current_upstream = None
+        self.cooldown_end_time = 0
+        self.last_response = {}
 
     def get_remaining_cooldown(self):
-        """Returns seconds until next rotation is allowed."""
-        rem = self.next_rotate_allowed - time.time()
-        return max(0, int(rem))
+        """Returns the remaining seconds in the cooldown period."""
+        rem = int(self.cooldown_end_time - time.time())
+        return max(0, rem)
+
+    async def rotate(self):
+        """Calls the rotation API and updates the proxy URL and cooldown state."""
+        # Check local cooldown first
+        if self.get_remaining_cooldown() > 0:
+            return self.current_upstream
+
+        timeout = aiohttp.ClientTimeout(total=10) # 10 second timeout
+        try:
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(self.api_url) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        self.last_response = data
+                        
+                        # Sync cooldown from API response
+                        time_remaining = data.get("timeRemaining", 0)
+                        self.cooldown_end_time = time.time() + time_remaining
+                        
+                        if data.get("status") == "success":
+                            self.current_upstream = data.get("proxy")
+                            return self.current_upstream
+                    return self.current_upstream # Fallback to existing
+        except Exception:
+            return self.current_upstream # Keep current on network error

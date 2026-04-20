@@ -56,27 +56,27 @@ def format_uptime(seconds):
     return f"{h}h {m}m {s}s"
 
 def load_config(file_name="config.json"):
-    """Loads configuration settings with redundant path checking."""
+    """Loads configuration settings."""
     file_path = find_file(file_name)
     
     defaults = {
-        "start_port": 5555,
-        "rotation_enabled": False,
+        "start_port": 1112,
+        "rotation_enabled": True,
         "rotation_interval": 300,
-        "use_key_proxy": False
+        "use_key_proxy": True
     }
     
     if not file_path:
         return defaults
     
     try:
-        with open(file_path, "r", encoding="utf-8-sig") as f: # Supports BOM
+        with open(file_path, "r", encoding="utf-8-sig") as f:
             config = json.load(f)
             return {
-                "start_port": config.get("start_port", 5555),
-                "rotation_enabled": config.get("rotation_enabled", False),
+                "start_port": config.get("start_port", 1112),
+                "rotation_enabled": config.get("rotation_enabled", True),
                 "rotation_interval": config.get("rotation_interval", 300),
-                "use_key_proxy": config.get("use_key_proxy", False)
+                "use_key_proxy": config.get("use_key_proxy", True)
             }
     except Exception:
         return defaults
@@ -87,12 +87,13 @@ def load_proxies(file_name="proxies.txt"):
     proxies = []
     if file_path:
         try:
-            # Try UTF-8 then Latin-1 for maximum compatibility
             with open(file_path, "r", encoding="utf-8-sig") as f:
                 lines = f.readlines()
         except:
-            with open(file_path, "r", encoding="latin-1") as f:
-                lines = f.readlines()
+            try:
+                with open(file_path, "r", encoding="latin-1") as f:
+                    lines = f.readlines()
+            except: lines = []
                 
         for line in lines:
             line = line.strip()
@@ -109,8 +110,10 @@ def load_keys(file_name="key.txt"):
             with open(file_path, "r", encoding="utf-8-sig") as f:
                 lines = f.readlines()
         except:
-            with open(file_path, "r", encoding="latin-1") as f:
-                lines = f.readlines()
+            try:
+                with open(file_path, "r", encoding="latin-1") as f:
+                    lines = f.readlines()
+            except: lines = []
                 
         for line in lines:
             line = line.strip()
@@ -119,8 +122,11 @@ def load_keys(file_name="key.txt"):
     return keys
 
 def clear_port(port):
+    """Silently attempt to clear port with a strict timeout."""
     import subprocess
     try:
         cmd = f"Stop-Process -Id (Get-NetTCPConnection -LocalPort {port}).OwningProcess -Force"
-        subprocess.run(["powershell", "-Command", cmd], capture_output=True)
-    except: pass
+        # 5 second timeout to prevent deadlocks on slow systems
+        subprocess.run(["powershell", "-Command", cmd], capture_output=True, timeout=5)
+    except Exception:
+        pass
