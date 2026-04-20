@@ -7,7 +7,7 @@ from rich.console import Console
 console = Console()
 
 class VuaProxyRotator:
-    """Handles multi-provider API requests with intelligent pattern probing."""
+    """Handles multi-provider API requests with VuaProxy v2 priority and direct data mapping."""
     
     def __init__(self, api_key):
         self.api_key = api_key
@@ -18,17 +18,16 @@ class VuaProxyRotator:
         self.domain = self._extract_domain(api_key)
         self.confirmed_url = None
         
-        # Common patterns to probe if 404 is encountered
-        self.patterns = [
-            "/api/rotate?key={key}",
-            "/rotate?key={key}",
-            "/rotate/{key}",
-            "/api/v1/rotate?key={key}",
-            "/index.php?key={key}&action=rotate"
+        # Priority 1: Official VuaProxy v2 (Applied to ALL keys first)
+        self.primary_patterns = [
+            "https://vuaproxy.com/api/v1/users/rotatev2?token={key}"
         ]
+        
+        # Priority 2: Fallback probe sequence (Only if primary fails)
+        self.fallback_patterns = self._get_fallback_patterns()
 
     def _extract_domain(self, key):
-        """Identifies the provider domain from the key payload."""
+        """Identifies the provider domain from the key payload for fallback use."""
         try:
             if "_" in key:
                 prefix = key.split("_")[0]
@@ -36,10 +35,24 @@ class VuaProxyRotator:
                 parts = decoded.split(";")
                 for part in parts:
                     if "." in part and len(part) > 3:
-                        return part
-            return "api.vuaproxy.com"
+                        domain = part.lower()
+                        if "vuaproxy" in domain: return "vuaproxy.com"
+                        return domain
+            return "vuaproxy.com"
         except:
-            return "api.vuaproxy.com"
+            return "vuaproxy.com"
+
+    def _get_fallback_patterns(self):
+        """Returns the probing sequence for fallback if primary VuaProxy API fails."""
+        if self.domain == "vuaproxy.com":
+            return ["https://api.vuaproxy.com/rotate/{key}"]
+        else:
+            return [
+                f"http://{self.domain}/api/rotate?key={{key}}",
+                f"http://{self.domain}/rotate?key={{key}}",
+                f"http://{self.domain}/rotate/{{key}}",
+                f"http://{self.domain}/api/v1/rotate?key={{key}}"
+            ]
 
     def get_remaining_cooldown(self):
         """Returns the remaining seconds in the cooldown period."""
@@ -47,7 +60,7 @@ class VuaProxyRotator:
         return max(0, rem)
 
     async def rotate(self):
-        """Calls the rotation API with intelligent pattern probing for 404 errors."""
+        """Calls the rotation API with universal high-priority for VuaProxy v2."""
         if self.get_remaining_cooldown() > 0:
             return self.current_upstream
 
@@ -59,10 +72,12 @@ class VuaProxyRotator:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout, headers=headers, trust_env=True) as session:
             
-            # If we already found a working URL, use it directly
-            urls_to_try = [self.confirmed_url] if self.confirmed_url else [
-                f"http://{self.domain}{p.format(key=self.api_key)}" for p in self.patterns
-            ]
+            # Probing sequence: Confirmed URL > Primary VuaProxy v2 > Fallbacks
+            if self.confirmed_url:
+                urls_to_try = [self.confirmed_url]
+            else:
+                urls_to_try = [p.format(key=self.api_key) for p in self.primary_patterns] + \
+                             [p.format(key=self.api_key) for p in self.fallback_patterns]
             
             for url in urls_to_try:
                 try:
@@ -71,28 +86,31 @@ class VuaProxyRotator:
                             data = await resp.json()
                             self.last_response = data
                             
+                            # Adhere to documented field: timeRemaining or wait
                             time_remaining = data.get("timeRemaining") or data.get("wait") or 0
                             self.cooldown_end_time = time.time() + int(time_remaining)
                             
+                            # Success check (Accept success status or presence of proxy data)
                             success = data.get("status") == "success" or "proxy" in data or "data" in data
                             if success:
+                                # Direct Mapping: Use exactly what the API provides
                                 self.current_upstream = data.get("proxy") or data.get("data")
-                                self.confirmed_url = url # Save the working pattern
+                                self.confirmed_url = url 
                                 self.last_error = "None"
                                 return self.current_upstream
+                            else:
+                                msg = data.get("message") or "API rejected request"
+                                self.last_error = f"API: {msg}"
+                                # If it's a known error from VuaProxy, don't try other patterns yet
+                                if "vuaproxy.com" in url: return self.current_upstream
                         
                         elif resp.status == 429:
                             self.last_error = "Rate Limited"
-                            try:
-                                data = await resp.json()
-                                wait = data.get("wait") or 60
-                                self.cooldown_end_time = time.time() + wait
-                                return self.current_upstream
-                            except: pass
-                            
-                        # If 404, we continue to the next pattern
-                        if resp.status == 404:
-                            self.last_error = f"HTTP 404 on {url.split('?')[0]}"
+                            return self.current_upstream
+                        
+                        # Handle 404/403/401 by moving to the next pattern in the list
+                        if resp.status in [404, 403, 401]:
+                            self.last_error = f"HTTP {resp.status} on pattern"
                             continue
                         else:
                             self.last_error = f"HTTP {resp.status}"
