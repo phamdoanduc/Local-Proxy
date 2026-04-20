@@ -3,11 +3,27 @@ import os
 import sys
 import time
 
-def get_base_path():
-    """Returns the base path for static files, handling PyInstaller environment."""
+def get_paths_to_check():
+    """Returns a list of potential directories where config files might exist."""
+    paths = []
+    # 1. Current Working Directory (where the user is in CMD)
+    paths.append(os.path.abspath("."))
+    # 2. Directory where the .exe or script is located
     if hasattr(sys, '_MEIPASS'):
-        return os.path.dirname(sys.executable)
-    return os.path.abspath(".")
+        paths.append(os.path.dirname(sys.executable))
+    else:
+        paths.append(os.path.dirname(os.path.abspath(__file__)))
+        paths.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    return list(dict.fromkeys(paths)) # Remove duplicates
+
+def find_file(file_name):
+    """Robustly searches for a file in multiple potential locations."""
+    for path in get_paths_to_check():
+        target = os.path.join(path, file_name)
+        if os.path.exists(target):
+            return target
+    return None
 
 def format_uptime(seconds):
     """Formats seconds into h m s format."""
@@ -18,11 +34,9 @@ def format_uptime(seconds):
     return f"{h}h {m}m {s}s"
 
 def load_config(file_name="config.json"):
-    """Loads configuration settings - Clean VuaProxy Version."""
-    base = get_base_path()
-    file_path = os.path.join(base, file_name)
+    """Loads configuration settings with redundant path checking."""
+    file_path = find_file(file_name)
     
-    # Standard VuaProxy Defaults
     defaults = {
         "start_port": 1112,
         "rotation_enabled": True,
@@ -30,11 +44,14 @@ def load_config(file_name="config.json"):
         "use_key_proxy": True
     }
     
-    if not os.path.exists(file_path):
-        # Create a clean config for the user if it doesn't exist
+    if not file_path:
+        # Last resort: Try to create it in the SAME folder as the EXE
+        exe_dir = os.path.dirname(sys.executable) if hasattr(sys, '_MEIPASS') else os.path.abspath(".")
+        new_path = os.path.join(exe_dir, file_name)
         try:
-            with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(defaults, f, indent=2)
+            if not os.path.exists(new_path):
+                with open(new_path, "w", encoding="utf-8") as f:
+                    json.dump(defaults, f, indent=2)
         except: pass
         return defaults
     
@@ -51,10 +68,10 @@ def load_config(file_name="config.json"):
         return defaults
 
 def load_proxies(file_name="proxies.txt"):
-    """Loads static proxies from file."""
-    file_path = os.path.join(get_base_path(), file_name)
+    """Loads static proxies using redundant path checking."""
+    file_path = find_file(file_name)
     proxies = []
-    if os.path.exists(file_path):
+    if file_path:
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
@@ -65,10 +82,10 @@ def load_proxies(file_name="proxies.txt"):
     return proxies
 
 def load_keys(file_name="key.txt"):
-    """Loads rotation keys from file."""
-    file_path = os.path.join(get_base_path(), file_name)
+    """Loads rotation keys using redundant path checking."""
+    file_path = find_file(file_name)
     keys = []
-    if os.path.exists(file_path):
+    if file_path:
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
