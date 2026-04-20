@@ -1,2 +1,3 @@
-2026/04/20-21:04:52.373 63dc Creating DB D:\codev1\Tool Proxy\data\profile_5555\Default\GCM Store since it was missing.
-2026/04/20-21:04:52.389 63dc Reusing MANIFEST D:\codev1\Tool Proxy\data\profile_5555\Default\GCM Store/MANIFEST-000001
+2026/04/20-21:17:47.172 e1c Reusing MANIFEST D:\codev1\Tool Proxy\data\profile_5555\Default\GCM Store/MANIFEST-000001
+2026/04/20-21:17:47.173 e1c Recovering log #3
+2026/04/20-21:17:47.174 e1c Reusing old log D:\codev1\Tool Proxy\data\profile_5555\Default\GCM Store/000003.log 

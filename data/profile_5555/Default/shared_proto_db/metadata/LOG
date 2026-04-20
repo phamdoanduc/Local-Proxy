@@ -1,2 +1,3 @@
-2026/04/20-21:04:46.646 208c Creating DB D:\codev1\Tool Proxy\data\profile_5555\Default\shared_proto_db\metadata since it was missing.
-2026/04/20-21:04:46.654 208c Reusing MANIFEST D:\codev1\Tool Proxy\data\profile_5555\Default\shared_proto_db\metadata/MANIFEST-000001
+2026/04/20-21:17:44.731 15c8 Reusing MANIFEST D:\codev1\Tool Proxy\data\profile_5555\Default\shared_proto_db\metadata/MANIFEST-000001
+2026/04/20-21:17:44.732 15c8 Recovering log #3
+2026/04/20-21:17:44.733 15c8 Reusing old log D:\codev1\Tool Proxy\data\profile_5555\Default\shared_proto_db\metadata/000003.log 
