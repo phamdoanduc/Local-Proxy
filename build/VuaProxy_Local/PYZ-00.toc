@@ -4045,6 +4045,90 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\_versions.py',
    'PYMODULE'),
+  ('rich._unicode_data.unicode10-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode10-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode11-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode11-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode12-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode12-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode12-1-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode12-1-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode13-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode13-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode14-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode14-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode15-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode15-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode15-1-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode15-1-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode16-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode16-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode17-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode17-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode4-1-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode4-1-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode5-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode5-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode5-1-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode5-1-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode5-2-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode5-2-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode6-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode6-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode6-1-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode6-1-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode6-2-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode6-2-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode6-3-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode6-3-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode7-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode7-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode8-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode8-0-0.py',
+   'PYMODULE'),
+  ('rich._unicode_data.unicode9-0-0',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_unicode_data\\unicode9-0-0.py',
+   'PYMODULE'),
   ('rich._win32_console',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\_win32_console.py',
@@ -4072,6 +4156,10 @@
   ('rich.ansi',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\ansi.py',
+   'PYMODULE'),
+  ('rich.bar',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\bar.py',
    'PYMODULE'),
   ('rich.box',
    'C:\\Users\\my '
@@ -4113,6 +4201,10 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\default_styles.py',
    'PYMODULE'),
+  ('rich.diagnose',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\diagnose.py',
+   'PYMODULE'),
   ('rich.emoji',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\emoji.py',
@@ -4124,6 +4216,10 @@
   ('rich.file_proxy',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\file_proxy.py',
+   'PYMODULE'),
+  ('rich.filesize',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\filesize.py',
    'PYMODULE'),
   ('rich.highlighter',
    'C:\\Users\\my '
@@ -4148,6 +4244,10 @@
   ('rich.live_render',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\live_render.py',
+   'PYMODULE'),
+  ('rich.logging',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\logging.py',
    'PYMODULE'),
   ('rich.markdown',
    'C:\\Users\\my '
@@ -4180,6 +4280,18 @@
   ('rich.pretty',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\pretty.py',
+   'PYMODULE'),
+  ('rich.progress',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\progress.py',
+   'PYMODULE'),
+  ('rich.progress_bar',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\progress_bar.py',
+   'PYMODULE'),
+  ('rich.prompt',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\rich\\prompt.py',
    'PYMODULE'),
   ('rich.protocol',
    'C:\\Users\\my '
