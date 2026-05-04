@@ -8,6 +8,7 @@ from rich.panel import Panel
 from rich.layout import Layout
 from core.manager import ProxyManager
 from core.util import format_uptime, get_diagnostic_info
+from rich import box
 
 console = Console()
 
@@ -70,7 +71,7 @@ async def main():
         manager = ProxyManager()
         start_time = time.time()
         
-        console.print("[bold green][*] Initializing VuaProxy Core v6.4 [Immortal Core]...[/]")
+        console.print("[bold green][*] Initializing VuaProxy Core v6.5.1 [Scale Master]...[/]")
         
         # Start all tunnels once
         await manager.start_all()
