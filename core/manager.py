@@ -55,9 +55,22 @@ class ProxyManager:
             except Exception as e:
                 console.print(f"   [bold red][!] Failed: {e}[/]")
 
+        # v6.5 Auto-export for easy copying
+        self.export_local_gateways()
+
         if self.rotation_enabled:
             self._loop_task = asyncio.create_task(self._rotation_loop())
             self._health_task = asyncio.create_task(self._health_check_loop())
+
+    def export_local_gateways(self):
+        """Exports all active 127.0.0.1:PORT entries to a file for easy copying."""
+        try:
+            with open("Local_Gateways.txt", "w", encoding="utf-8") as f:
+                for tunnel in self.tunnels:
+                    f.write(f"127.0.0.1:{tunnel.target_port}\n")
+            console.print("[bold cyan][*] Auto-Exported gateways to 'Local_Gateways.txt'[/]")
+        except Exception as e:
+            console.print(f"[bold red][!] Export Failed: {e}[/]")
 
     def get_rotation_status(self, tunnel):
         """Returns visual timing or latency-based health status."""

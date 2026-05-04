@@ -11,33 +11,44 @@ from core.util import format_uptime, get_diagnostic_info
 
 console = Console()
 
-def generate_dashboard(manager, start_time):
-    """Generates the live dashboard table with unified rotation timing."""
+def generate_dashboard(manager, start_time, page=0, page_size=10):
     uptime = format_uptime(time.time() - start_time)
-    mode = "[KEY MODE]" if manager.config.get("use_key_proxy") else "[STATIC MODE]"
+    mode_str = "[STATIC MODE]" if not manager.config.get("use_key_proxy", False) else "[KEY MODE]"
     
-    table = Table(title=f"VuaProxy - Local Proxy {mode} - Up: {uptime}", expand=True)
-    table.add_column("ID", justify="center", style="cyan", no_wrap=True)
-    table.add_column("LOCAL GATEWAY", justify="left", style="white")
-    table.add_column("API IP:PORT", justify="left", style="magenta")
-    table.add_column("STATUS", justify="center", style="green")
-    table.add_column("COOLDOWN", justify="center", style="yellow")
-    table.add_column("CONNS", justify="center", style="white")
+    total_tunnels = len(manager.tunnels)
+    total_pages = (total_tunnels + page_size - 1) // page_size
+    current_page = page % total_pages if total_pages > 0 else 0
+    
+    start_idx = current_page * page_size
+    end_idx = min(start_idx + page_size, total_tunnels)
+    display_tunnels = manager.tunnels[start_idx:end_idx]
 
-    for tunnel in manager.tunnels:
-        status = "ACTIVE" if tunnel.is_active else "ERROR"
-        status_style = "green" if tunnel.is_active else "bold red"
-        
-        # Use the unified rotation status from manager
-        cooldown_display = manager.get_rotation_status(tunnel)
+    table = Table(
+        title=f"VuaProxy - Local Proxy {mode_str} - Up: {uptime} (Page {current_page+1}/{total_pages if total_pages > 0 else 1})",
+        box=box.ROUNDED,
+        header_style="bold cyan",
+        expand=True
+    )
+    
+    table.add_column("ID", justify="center", style="dim")
+    table.add_column("LOCAL GATEWAY", justify="left", style="green")
+    table.add_column("API IP:PORT", justify="left", style="white")
+    table.add_column("STATUS", justify="center")
+    table.add_column("COOLDOWN", justify="center", style="yellow")
+    table.add_column("CONNS", justify="center", style="magenta")
+
+    for tunnel in display_tunnels:
+        status_text = manager.get_rotation_status(tunnel)
+        color = "green" if "READY" in status_text or "WAIT" in status_text else "white"
+        if "LAG" in status_text: color = "bold red"
         
         table.add_row(
             str(tunnel.id),
             f"127.0.0.1:{tunnel.target_port}",
             tunnel.upstream_addr if tunnel.upstream_addr else "0.0.0.0:0",
-            f"[{status_style}]{status}[/]",
-            cooldown_display,
-            str(tunnel.connection_count)
+            "[bold green]ACTIVE[/]",
+            f"[{color}]{status_text}[/]",
+            str(getattr(tunnel, 'connection_count', 0))
         )
     return table
 
