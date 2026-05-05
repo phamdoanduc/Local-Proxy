@@ -48,19 +48,26 @@ class ProxyTunnel:
         self._parse_upstream(new_upstream)
 
     async def _bridge(self, reader, writer):
-        """Clean Bridge: Ensures all tasks are properly finalized to avoid pending task warnings."""
+        """Pure Gold v6.5.3: Silent task finalization to keep the console clean."""
         target_writer = None
         try:
             self.connection_count += 1
-            data = await reader.read(16384)
+            # Standard handshake and relay logic
+            try:
+                data = await reader.read(16384)
+            except asyncio.CancelledError: return
+            
             if not data: return
             
             header_text = data.decode(errors='ignore')
             is_connect = header_text.startswith("CONNECT")
             
-            target_reader, target_writer = await asyncio.open_connection(
-                self.upstream_host, int(self.upstream_port)
-            )
+            try:
+                target_reader, target_writer = await asyncio.open_connection(
+                    self.upstream_host, int(self.upstream_port)
+                )
+            except (asyncio.CancelledError, Exception):
+                return
             
             if is_connect:
                 first_line = header_text.split("\r\n")[0]
@@ -70,7 +77,10 @@ class ProxyTunnel:
                 target_writer.write(handshake.encode())
                 await target_writer.drain()
                 
-                resp = await target_reader.read(8192)
+                try:
+                    resp = await target_reader.read(8192)
+                except asyncio.CancelledError: return
+                
                 if b"200" in resp.split(b"\r\n")[0]:
                     writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
                     await writer.drain()
@@ -101,20 +111,26 @@ class ProxyTunnel:
                         if not chunk: break
                         w.write(chunk)
                         await w.drain()
-                except: pass
+                except (asyncio.CancelledError, Exception): pass
                 finally:
                     try: w.close()
                     except: pass
 
-            # v6.3.1 Fix: Use wait with FIRST_COMPLETED and cancel remaining tasks
             t1 = asyncio.create_task(pipe(reader, target_writer))
             t2 = asyncio.create_task(pipe(target_reader, writer))
             
-            done, pending = await asyncio.wait([t1, t2], return_when=asyncio.FIRST_COMPLETED)
-            for task in pending:
-                task.cancel()
+            try:
+                done, pending = await asyncio.wait([t1, t2], return_when=asyncio.FIRST_COMPLETED)
+                for task in pending:
+                    task.cancel()
+                    # Await cancellation to ensure task is fully cleaned up
+                    try: await task
+                    except: pass
+            except asyncio.CancelledError:
+                t1.cancel()
+                t2.cancel()
             
-        except Exception:
+        except (asyncio.CancelledError, Exception):
             pass
         finally:
             self.connection_count = max(0, self.connection_count - 1)
