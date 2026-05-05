@@ -23,26 +23,27 @@ class ProxyManager:
     async def start_all(self):
         """Initializes tunnels and starts background monitoring tasks."""
         self.tunnels = []
-        use_key = self.config.get("use_key_proxy", False)
-        
-        proxy_data = load_keys() if use_key else load_proxies()
+        proxy_data = load_proxies()
+        if not proxy_data:
+            proxy_data = load_keys()
         start_port = self.config.get("start_port", 5555)
 
-        for i, item in enumerate(proxy_data):
+        async def start_single_tunnel(i, item):
             tunnel_id = i + 1
             target_port = start_port + i
-            
-            console.print(f"[bold blue]=> [{tunnel_id}] Initializing port {target_port}...[/]")
-            
             try:
-                clear_port(target_port)
-                upstream = item.get("raw")
+                upstream_raw = item.get("raw")
                 rotator = None
                 
                 if item.get("type") == "api":
-                    console.print(f"   > [{tunnel_id}] Requesting IP from API...")
-                    rotator = VuaProxyRotator(upstream)
+                    # Fix: Pass both key and tunnel_id correctly
+                    rotator = VuaProxyRotator(upstream_raw, tunnel_id)
                     upstream = await rotator.rotate()
+                else:
+                    upstream = upstream_raw
+                
+                if not upstream:
+                    raise Exception("API returned empty IP")
                 
                 tunnel = ProxyTunnel(tunnel_id, target_port, upstream)
                 if rotator: 
@@ -50,10 +51,17 @@ class ProxyManager:
                     tunnel.last_rotation_time = time.time()
                 
                 if await tunnel.start():
-                    self.tunnels.append(tunnel)
-                    console.print(f"   [green]+ [{tunnel_id}] Started Successfully.[/]")
+                    return tunnel
             except Exception as e:
-                console.print(f"   [bold red][!] Failed: {e}[/]")
+                console.print(f"   [bold red][!] Port {target_port} Failed: {e}[/]")
+            return None
+
+        console.print(f"[bold cyan][*] Turbo Launch: Starting {len(proxy_data)} ports concurrently...[/]")
+        tasks = [start_single_tunnel(i, item) for i, item in enumerate(proxy_data)]
+        results = await asyncio.gather(*tasks)
+        
+        self.tunnels = [t for t in results if t is not None]
+        console.print(f"[bold green][+] Turbo Launch Complete: {len(self.tunnels)} ports active.[/]")
 
         # v6.5 Auto-export for easy copying
         self.export_local_gateways()

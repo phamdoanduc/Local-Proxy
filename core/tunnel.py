@@ -1,9 +1,9 @@
 import asyncio
 import base64
-import socket
+import re
 
 class ProxyTunnel:
-    """Diamond Pipe v6.3.1: Enhanced task lifecycle management for a cleaner console."""
+    """Unlimited v6.6.4: Regex-based parsing for perfect accuracy with complex passwords."""
     
     def __init__(self, id, target_port, upstream_addr_raw):
         self.id = id
@@ -13,74 +13,74 @@ class ProxyTunnel:
         self.auth_header = None
         self.connection_count = 0
         self.server = None
-        
         self.upstream_host = None
         self.upstream_port = None
+        self.upstream_addr = "Parsing..."
         self._parse_upstream(upstream_addr_raw)
 
     def _parse_upstream(self, s):
-        """Robustly extracts host, port and credentials."""
         try:
+            if not s: return
             s = s.strip()
-            display_str = s
-            if "@" in s:
-                auth_part, addr_part = s.rsplit("@", 1)
-                self.upstream_host, self.upstream_port = addr_part.rsplit(":", 1)
-                self.auth_header = f"Basic {base64.b64encode(auth_part.encode()).decode()}"
-                display_str = addr_part
+            
+            # Pattern for host:port:user:pass
+            # Matches: host (chars/digits/dots/hyphens), port (digits), user (any), pass (any)
+            match = re.match(r'^([^:]+):(\d+):([^:]+):(.+)$', s)
+            if match:
+                self.upstream_host = match.group(1)
+                self.upstream_port = int(match.group(2))
+                user = match.group(3)
+                pwd = match.group(4)
+                auth = f"{user}:{pwd}"
+                self.auth_header = f"Basic {base64.b64encode(auth.encode()).decode()}"
+                self.upstream_addr = f"{self.upstream_host}:{self.upstream_port}"
+                return
+
+            # Fallback for user:pass@host:port
+            match = re.match(r'^([^:]+):([^@]+)@([^:]+):(\d+)$', s)
+            if match:
+                user = match.group(1)
+                pwd = match.group(2)
+                self.upstream_host = match.group(3)
+                self.upstream_port = int(match.group(4))
+                auth = f"{user}:{pwd}"
+                self.auth_header = f"Basic {base64.b64encode(auth.encode()).decode()}"
+                self.upstream_addr = f"{self.upstream_host}:{self.upstream_port}"
+                return
+                
+            # Final Fallback: host:port only
+            parts = s.split(":")
+            if len(parts) == 2:
+                self.upstream_host, self.upstream_port = parts[0], int(parts[1])
+                self.upstream_addr = s
             else:
-                parts = s.split(":")
-                if len(parts) >= 4:
-                    self.upstream_host = parts[0]
-                    self.upstream_port = int(parts[1])
-                    auth = f"{parts[2]}:{parts[3]}"
-                    self.auth_header = f"Basic {base64.b64encode(auth.encode()).decode()}"
-                    display_str = f"{parts[0]}:{parts[1]}"
-                else:
-                    self.upstream_host = parts[0]
-                    self.upstream_port = int(parts[1])
-                    display_str = s
-            self.upstream_addr = display_str if len(display_str) <= 30 else display_str[:27] + "..."
+                self.upstream_addr = "Parse Error"
         except:
             self.upstream_addr = "Parse Error"
 
-    def update_upstream(self, new_upstream):
-        self._parse_upstream(new_upstream)
-
     async def _bridge(self, reader, writer):
-        """Pure Gold v6.5.3: Silent task finalization to keep the console clean."""
+        if not self.upstream_host: 
+            writer.close()
+            return
         target_writer = None
         try:
             self.connection_count += 1
-            # Standard handshake and relay logic
-            try:
-                data = await reader.read(16384)
-            except asyncio.CancelledError: return
-            
+            data = await asyncio.wait_for(reader.read(16384), timeout=10)
             if not data: return
-            
             header_text = data.decode(errors='ignore')
             is_connect = header_text.startswith("CONNECT")
-            
             try:
-                target_reader, target_writer = await asyncio.open_connection(
-                    self.upstream_host, int(self.upstream_port)
+                target_reader, target_writer = await asyncio.wait_for(
+                    asyncio.open_connection(self.upstream_host, self.upstream_port), 
+                    timeout=15
                 )
-            except (asyncio.CancelledError, Exception):
-                return
-            
+            except: return
             if is_connect:
-                first_line = header_text.split("\r\n")[0]
-                target = first_line.split(" ")[1]
-                auth_line = f"Proxy-Authorization: {self.auth_header}\r\n" if self.auth_header else ""
-                handshake = f"CONNECT {target} HTTP/1.1\r\n{auth_line}Connection: keep-alive\r\n\r\n"
-                target_writer.write(handshake.encode())
+                target = header_text.split("\r\n")[0].split(" ")[1]
+                auth = f"Proxy-Authorization: {self.auth_header}\r\n" if self.auth_header else ""
+                target_writer.write(f"CONNECT {target} HTTP/1.1\r\n{auth}Connection: keep-alive\r\n\r\n".encode())
                 await target_writer.drain()
-                
-                try:
-                    resp = await target_reader.read(8192)
-                except asyncio.CancelledError: return
-                
+                resp = await asyncio.wait_for(target_reader.read(8192), timeout=10)
                 if b"200" in resp.split(b"\r\n")[0]:
                     writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
                     await writer.drain()
@@ -89,49 +89,28 @@ class ProxyTunnel:
                     return
             else:
                 if self.auth_header and "Proxy-Authorization" not in header_text:
-                    end_of_headers = header_text.find("\r\n\r\n")
-                    if end_of_headers != -1:
-                        new_header = header_text[:end_of_headers] + f"\r\nProxy-Authorization: {self.auth_header}\r\n\r\n" + header_text[end_of_headers+4:]
-                        target_writer.write(new_header.encode())
-                    else:
-                        insertion = header_text.find("\r\n")
-                        if insertion != -1:
-                            new_header = header_text[:insertion+2] + f"Proxy-Authorization: {self.auth_header}\r\n" + header_text[insertion+2:]
-                            target_writer.write(new_header.encode())
-                        else:
-                            target_writer.write(data)
-                else:
-                    target_writer.write(data)
+                    idx = header_text.find("\r\n\r\n")
+                    new_h = header_text[:idx] + f"\r\nProxy-Authorization: {self.auth_header}\r\n\r\n" + header_text[idx+4:] if idx != -1 else header_text
+                    target_writer.write(new_h.encode())
+                else: target_writer.write(data)
                 await target_writer.drain()
 
             async def pipe(r, w):
                 try:
                     while True:
-                        chunk = await r.read(16384)
-                        if not chunk: break
-                        w.write(chunk)
+                        c = await r.read(16384)
+                        if not c: break
+                        w.write(c)
                         await w.drain()
-                except (asyncio.CancelledError, Exception): pass
+                except: pass
                 finally:
                     try: w.close()
                     except: pass
-
             t1 = asyncio.create_task(pipe(reader, target_writer))
             t2 = asyncio.create_task(pipe(target_reader, writer))
-            
-            try:
-                done, pending = await asyncio.wait([t1, t2], return_when=asyncio.FIRST_COMPLETED)
-                for task in pending:
-                    task.cancel()
-                    # Await cancellation to ensure task is fully cleaned up
-                    try: await task
-                    except: pass
-            except asyncio.CancelledError:
-                t1.cancel()
-                t2.cancel()
-            
-        except (asyncio.CancelledError, Exception):
-            pass
+            await asyncio.wait([t1, t2], return_when=asyncio.FIRST_COMPLETED)
+            t1.cancel(); t2.cancel()
+        except: pass
         finally:
             self.connection_count = max(0, self.connection_count - 1)
             try: writer.close()
@@ -141,6 +120,7 @@ class ProxyTunnel:
                 except: pass
 
     async def start(self):
+        if not self.upstream_host: return False
         try:
             self.server = await asyncio.start_server(self._bridge, '127.0.0.1', self.target_port)
             self.is_active = True

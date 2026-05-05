@@ -1,121 +1,79 @@
-import json
 import os
 import sys
-import re
+import json
 import time
-import socket
-from rich.console import Console
-
-console = Console()
-
-def format_uptime(seconds):
-    """Converts seconds into a human-readable Hh Mm Ss format."""
-    seconds = int(seconds)
-    h = seconds // 3600
-    m = (seconds % 3600) // 60
-    s = seconds % 60
-    return f"{h}h {m}m {s}s"
+import subprocess
 
 def find_file(filename):
-    """Finds a file prioritizing the directory of the current script/EXE."""
-    # 1. Absolute Priority: Directory where the current running process lives
-    exe_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    # 2. Secondary: Current Working Directory
-    cwd = os.getcwd()
-    
-    search_paths = [exe_dir, cwd]
-    
-    # Remove duplicates
-    search_paths = list(dict.fromkeys(search_paths))
-    
-    for path in search_paths:
-        full_path = os.path.join(path, filename)
-        if os.path.exists(full_path):
-            return full_path
-    return None
-
-def read_file_safe(path):
-    """Reads a file trying multiple encodings to ensure compatibility with all editors."""
-    encodings = ['utf-8-sig', 'utf-8', 'utf-16', 'latin-1', 'cp1252']
-    for enc in encodings:
-        try:
-            with open(path, 'r', encoding=enc) as f:
-                return f.read()
-        except:
-            continue
-    return ""
-
-def load_config():
-    """Loads config.json with smart error reporting and syntax tolerance."""
-    path = find_file("config.json")
-    if not path:
-        return {}
-    content = read_file_safe(path)
-    if not content: return {}
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError as e:
-        try:
-            fixed = re.sub(r',\s*([\]}])', r'\1', content)
-            return json.loads(fixed)
-        except:
-            console.print(f"[bold red][!] Config Error in config.json at line {e.lineno}, col {e.colno}[/]")
-            return {}
-    except:
-        return {}
-
-def load_proxies():
-    """Loads proxies from proxies.txt with multi-encoding support."""
-    path = find_file("proxies.txt")
-    if not path: return []
-    content = read_file_safe(path)
-    if not content: return []
-    lines = []
-    for line in content.splitlines():
-        cleaned = line.strip()
-        if cleaned:
-            lines.append({"type": "static", "raw": cleaned})
-    return lines
-
-def load_keys():
-    """Loads rotation keys from key.txt with multi-encoding support."""
-    path = find_file("key.txt")
-    if not path: return []
-    content = read_file_safe(path)
-    if not content: return []
-    lines = []
-    for line in content.splitlines():
-        cleaned = line.strip()
-        if cleaned:
-            lines.append({"type": "api", "raw": cleaned})
-    return lines
-
-def get_diagnostic_info():
-    """Provides a detailed diagnostic report with file sizes to identify empty files."""
-    exe_path = sys.argv[0]
-    cwd = os.getcwd()
-    
-    report = "\n--- [DIAGNOSTIC INFO] ---\n"
-    report += f"EXE Path: {exe_path}\n"
-    report += f"CWD Path: {cwd}\n"
-    report += "File Status:\n"
-    
-    for f in ["config.json", "proxies.txt", "key.txt"]:
-        p = find_file(f)
-        if p:
-            size = os.path.getsize(p)
-            report += f"  - {f}: [FOUND at {p}] ({size} bytes)\n"
-        else:
-            report += f"  - {f}: [NOT FOUND]\n"
-    
-    report += "-------------------------\n"
-    return report
+    if os.path.exists(filename):
+        return os.path.abspath(filename)
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        if os.path.basename(base_path) == 'core':
+            base_path = os.path.dirname(base_path)
+    target = os.path.join(base_path, filename)
+    return target if os.path.exists(target) else filename
 
 def clear_port(port):
-    """Clears a port using a non-blocking PowerShell command with timeout."""
-    import subprocess
-    cmd = f"Stop-Process -Id (Get-NetTCPConnection -LocalPort {port}).OwningProcess -Force"
+    """Kills any process using the specified port (Windows)."""
     try:
-        subprocess.run(["powershell", "-Command", cmd], capture_output=True, timeout=5)
+        output = subprocess.check_output(f'netstat -ano | findstr :{port}', shell=True).decode()
+        for line in output.strip().split('\n'):
+            if 'LISTENING' in line:
+                pid = line.strip().split()[-1]
+                subprocess.run(f'taskkill /F /PID {pid}', shell=True, capture_output=True)
+    except: pass
+
+def load_config():
+    path = find_file("config.json")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
     except:
-        pass
+        return {"start_port": 5555, "rotation_interval": 300}
+
+def load_proxies():
+    path = find_file("proxies.txt")
+    proxies = []
+    try:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"): continue
+                    proxies.append({"type": "static", "raw": line})
+    except: pass
+    return proxies
+
+def load_keys():
+    path = find_file("key.txt")
+    keys = []
+    try:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line: keys.append({"type": "api", "raw": line})
+    except: pass
+    return keys
+
+def format_uptime(seconds):
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+    return f"{h}h {m}m {s}s"
+
+def get_diagnostic_info():
+    exe_path = sys.executable if getattr(sys, 'frozen', False) else __file__
+    cwd = os.getcwd()
+    info = f"\n--- [DIAGNOSTIC INFO] ---\n"
+    info += f"EXE Path: {exe_path}\nCWD Path: {cwd}\nFile Status:\n"
+    for f in ["config.json", "proxies.txt", "key.txt"]:
+        p = find_file(f)
+        status = "[FOUND]" if os.path.exists(p) else "[MISSING]"
+        size = f"({os.path.getsize(p)} bytes)" if os.path.exists(p) else ""
+        info += f"  - {f}: {status} at {p} {size}\n"
+    info += "-------------------------\n"
+    return info

@@ -4932,13 +4932,13 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\python311.dll',
    'BINARY'),
-  ('numpy.libs\\libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll',
-   'BINARY'),
   ('numpy.libs\\msvcp140-263139962577ecda4cd9469ca360a746.dll',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy.libs\\msvcp140-263139962577ecda4cd9469ca360a746.dll',
+   'BINARY'),
+  ('numpy.libs\\libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll',
    'BINARY'),
   ('_decimal.pyd',
    'C:\\Users\\my '
@@ -5152,65 +5152,65 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-environment-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-heap-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-string-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-string-l1-1-0.dll',
-   'BINARY'),
-  ('VCRUNTIME140.dll',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\VCRUNTIME140.dll',
-   'BINARY'),
   ('api-ms-win-crt-runtime-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-runtime-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-convert-l1-1-0.dll',
+  ('api-ms-win-crt-heap-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-convert-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-filesystem-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-filesystem-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-locale-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-locale-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-process-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-time-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-time-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-crt-conio-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-conio-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-heap-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-stdio-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-stdio-l1-1-0.dll',
    'BINARY'),
+  ('api-ms-win-crt-convert-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-convert-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-string-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-string-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-locale-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-locale-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-time-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-time-l1-1-0.dll',
+   'BINARY'),
+  ('VCRUNTIME140.dll',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\VCRUNTIME140.dll',
+   'BINARY'),
+  ('api-ms-win-crt-filesystem-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-filesystem-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-process-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-process-l1-1-0.dll',
+   'BINARY'),
   ('api-ms-win-crt-math-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-math-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-crt-conio-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-conio-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-crt-utility-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-utility-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-crt-private-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-private-l1-1-0.dll',
-   'BINARY'),
   ('VCRUNTIME140_1.dll',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\VCRUNTIME140_1.dll',
+   'BINARY'),
+  ('api-ms-win-crt-private-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-crt-private-l1-1-0.dll',
    'BINARY'),
   ('libcrypto-3.dll',
    'C:\\Users\\my '
@@ -5235,109 +5235,73 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\ucrtbase.dll',
    'BINARY'),
-  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+  ('api-ms-win-core-namedpipe-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-namedpipe-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-kernel32-legacy-l1-1-1.dll',
+  ('api-ms-win-core-libraryloader-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-kernel32-legacy-l1-1-1.dll',
-   'BINARY'),
-  ('api-ms-win-core-debug-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-fibers-l1-1-1.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-fibers-l1-1-1.dll',
-   'BINARY'),
-  ('api-ms-win-core-sysinfo-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-sysinfo-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-fibers-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-fibers-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-localization-l1-2-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-localization-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-timezone-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-timezone-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-profile-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-profile-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-libraryloader-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-util-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-util-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-synch-l1-1-0.dll',
+  ('api-ms-win-core-datetime-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-string-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
    'BINARY'),
   ('api-ms-win-core-file-l2-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-file-l2-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-namedpipe-l1-1-0.dll',
+  ('api-ms-win-core-timezone-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-namedpipe-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-timezone-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-handle-l1-1-0.dll',
+  ('api-ms-win-core-synch-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-console-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-interlocked-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-datetime-l1-1-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-datetime-l1-1-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-sysinfo-l1-2-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-sysinfo-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-file-l1-2-0.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-file-l1-2-0.dll',
-   'BINARY'),
-  ('api-ms-win-core-processthreads-l1-1-1.dll',
-   'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
    'BINARY'),
   ('api-ms-win-core-errorhandling-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-errorhandling-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-processthreads-l1-1-0.dll',
+  ('api-ms-win-core-kernel32-legacy-l1-1-1.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-kernel32-legacy-l1-1-1.dll',
    'BINARY'),
-  ('api-ms-win-core-synch-l1-2-0.dll',
+  ('api-ms-win-core-sysinfo-l1-2-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-synch-l1-2-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-sysinfo-l1-2-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-rtlsupport-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-fibers-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-fibers-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-string-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-string-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-file-l1-2-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-file-l1-2-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-console-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-console-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-profile-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-profile-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processthreads-l1-1-1.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-1.dll',
    'BINARY'),
   ('api-ms-win-core-memory-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
@@ -5347,23 +5311,63 @@
    'C:\\Program Files\\Eclipse '
    'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-heap-l1-1-0.dll',
    'BINARY'),
-  ('api-ms-win-core-libraryloader-l1-1-0.dll',
+  ('api-ms-win-core-handle-l1-1-0.dll',
    'C:\\Program Files\\Eclipse '
-   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-libraryloader-l1-1-0.dll',
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-handle-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-sysinfo-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-sysinfo-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-localization-l1-2-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-localization-l1-2-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-interlocked-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-interlocked-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-debug-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-debug-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-fibers-l1-1-1.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-fibers-l1-1-1.dll',
+   'BINARY'),
+  ('api-ms-win-core-synch-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-synch-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processthreads-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processthreads-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-file-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-file-l1-1-0.dll',
+   'BINARY'),
+  ('api-ms-win-core-processenvironment-l1-1-0.dll',
+   'C:\\Program Files\\Eclipse '
+   'Adoptium\\jdk-21.0.6.7-hotspot\\bin\\api-ms-win-core-processenvironment-l1-1-0.dll',
    'BINARY')],
  [],
  [],
- [('pyreadline3-3.5.4.dist-info\\METADATA',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\METADATA',
-   'DATA'),
-  ('pyreadline3-3.5.4.dist-info\\top_level.txt',
+ [('pyreadline3-3.5.4.dist-info\\top_level.txt',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\top_level.txt',
    'DATA'),
-  ('attrs-25.4.0.dist-info\\WHEEL',
+  ('attrs-25.4.0.dist-info\\RECORD',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\WHEEL',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\RECORD',
+   'DATA'),
+  ('numpy-2.2.6.dist-info\\entry_points.txt',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\entry_points.txt',
+   'DATA'),
+  ('numpy-2.2.6.dist-info\\INSTALLER',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\INSTALLER',
    'DATA'),
   ('numpy-2.2.6.dist-info\\LICENSE.txt',
    'C:\\Users\\my '
@@ -5373,100 +5377,137 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\RECORD',
    'DATA'),
-  ('numpy-2.2.6.dist-info\\entry_points.txt',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\entry_points.txt',
-   'DATA'),
-  ('pyreadline3-3.5.4.dist-info\\WHEEL',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\WHEEL',
-   'DATA'),
-  ('numpy-2.2.6.dist-info\\DELVEWHEEL',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\DELVEWHEEL',
-   'DATA'),
-  ('numpy-2.2.6.dist-info\\METADATA',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\METADATA',
-   'DATA'),
   ('numpy-2.2.6.dist-info\\WHEEL',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\WHEEL',
-   'DATA'),
-  ('pyreadline3-3.5.4.dist-info\\LICENSE.md',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\LICENSE.md',
-   'DATA'),
-  ('pyreadline3-3.5.4.dist-info\\RECORD',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\RECORD',
-   'DATA'),
-  ('attrs-25.4.0.dist-info\\INSTALLER',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\INSTALLER',
    'DATA'),
   ('attrs-25.4.0.dist-info\\METADATA',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\METADATA',
    'DATA'),
-  ('attrs-25.4.0.dist-info\\RECORD',
+  ('pyreadline3-3.5.4.dist-info\\INSTALLER',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\RECORD',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\INSTALLER',
+   'DATA'),
+  ('attrs-25.4.0.dist-info\\WHEEL',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\WHEEL',
+   'DATA'),
+  ('pyreadline3-3.5.4.dist-info\\RECORD',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\RECORD',
+   'DATA'),
+  ('numpy-2.2.6.dist-info\\DELVEWHEEL',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\DELVEWHEEL',
+   'DATA'),
+  ('pyreadline3-3.5.4.dist-info\\WHEEL',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\WHEEL',
+   'DATA'),
+  ('attrs-25.4.0.dist-info\\INSTALLER',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('numpy-2.2.6.dist-info\\METADATA',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\METADATA',
+   'DATA'),
+  ('pyreadline3-3.5.4.dist-info\\METADATA',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\METADATA',
+   'DATA'),
+  ('pyreadline3-3.5.4.dist-info\\LICENSE.md',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\LICENSE.md',
    'DATA'),
   ('attrs-25.4.0.dist-info\\licenses\\LICENSE',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\attrs-25.4.0.dist-info\\licenses\\LICENSE',
    'DATA'),
-  ('numpy-2.2.6.dist-info\\INSTALLER',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\numpy-2.2.6.dist-info\\INSTALLER',
-   'DATA'),
-  ('pyreadline3-3.5.4.dist-info\\INSTALLER',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyreadline3-3.5.4.dist-info\\INSTALLER',
-   'DATA'),
   ('base_library.zip',
    'D:\\codev1\\Tool Proxy\\build\\VuaProxy_Local\\base_library.zip',
    'DATA')],
- [('warnings',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\warnings.py',
+ [('os',
+   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\os.py',
    'PYMODULE'),
-  ('_collections_abc',
+  ('operator',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_collections_abc.py',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\operator.py',
    'PYMODULE'),
   ('posixpath',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\posixpath.py',
    'PYMODULE'),
-  ('genericpath',
+  ('_weakrefset',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\genericpath.py',
-   'PYMODULE'),
-  ('collections.abc',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\collections\\abc.py',
-   'PYMODULE'),
-  ('collections',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\collections\\__init__.py',
-   'PYMODULE'),
-  ('linecache',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\linecache.py',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_weakrefset.py',
    'PYMODULE'),
   ('reprlib',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\reprlib.py',
    'PYMODULE'),
-  ('ntpath',
+  ('sre_parse',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\ntpath.py',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\sre_parse.py',
    'PYMODULE'),
-  ('codecs',
+  ('re._parser',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\codecs.py',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_parser.py',
+   'PYMODULE'),
+  ('re._constants',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_constants.py',
+   'PYMODULE'),
+  ('re._compiler',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_compiler.py',
+   'PYMODULE'),
+  ('re._casefix',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_casefix.py',
+   'PYMODULE'),
+  ('re',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\__init__.py',
+   'PYMODULE'),
+  ('sre_compile',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\sre_compile.py',
+   'PYMODULE'),
+  ('io',
+   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\io.py',
+   'PYMODULE'),
+  ('_collections_abc',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_collections_abc.py',
+   'PYMODULE'),
+  ('warnings',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\warnings.py',
+   'PYMODULE'),
+  ('stat',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\stat.py',
+   'PYMODULE'),
+  ('abc',
+   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\abc.py',
+   'PYMODULE'),
+  ('types',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\types.py',
+   'PYMODULE'),
+  ('functools',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\functools.py',
+   'PYMODULE'),
+  ('genericpath',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\genericpath.py',
+   'PYMODULE'),
+  ('heapq',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\heapq.py',
    'PYMODULE'),
   ('keyword',
    'C:\\Users\\my '
@@ -5476,8 +5517,33 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\sre_constants.py',
    'PYMODULE'),
-  ('abc',
-   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\abc.py',
+  ('weakref',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\weakref.py',
+   'PYMODULE'),
+  ('copyreg',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\copyreg.py',
+   'PYMODULE'),
+  ('codecs',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\codecs.py',
+   'PYMODULE'),
+  ('linecache',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\linecache.py',
+   'PYMODULE'),
+  ('enum',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\enum.py',
+   'PYMODULE'),
+  ('collections.abc',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\collections\\abc.py',
+   'PYMODULE'),
+  ('collections',
+   'C:\\Users\\my '
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\collections\\__init__.py',
    'PYMODULE'),
   ('encodings.zlib_codec',
    'C:\\Users\\my '
@@ -5967,79 +6033,13 @@
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\encodings\\__init__.py',
    'PYMODULE'),
-  ('copyreg',
+  ('ntpath',
    'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\copyreg.py',
-   'PYMODULE'),
-  ('stat',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\stat.py',
-   'PYMODULE'),
-  ('functools',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\functools.py',
-   'PYMODULE'),
-  ('os',
-   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\os.py',
-   'PYMODULE'),
-  ('io',
-   'C:\\Users\\my PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\io.py',
-   'PYMODULE'),
-  ('weakref',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\weakref.py',
-   'PYMODULE'),
-  ('_weakrefset',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\_weakrefset.py',
-   'PYMODULE'),
-  ('heapq',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\heapq.py',
-   'PYMODULE'),
-  ('enum',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\enum.py',
-   'PYMODULE'),
-  ('sre_compile',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\sre_compile.py',
-   'PYMODULE'),
-  ('sre_parse',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\sre_parse.py',
-   'PYMODULE'),
-  ('operator',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\operator.py',
+   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\ntpath.py',
    'PYMODULE'),
   ('locale',
    'C:\\Users\\my '
    'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\locale.py',
-   'PYMODULE'),
-  ('re._parser',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_parser.py',
-   'PYMODULE'),
-  ('re._constants',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_constants.py',
-   'PYMODULE'),
-  ('re._compiler',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_compiler.py',
-   'PYMODULE'),
-  ('re._casefix',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\_casefix.py',
-   'PYMODULE'),
-  ('re',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\re\\__init__.py',
-   'PYMODULE'),
-  ('types',
-   'C:\\Users\\my '
-   'PC\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\types.py',
    'PYMODULE'),
   ('traceback',
    'C:\\Users\\my '
